@@ -13,12 +13,12 @@ class ClientController extends Controller
     public function index()
     {
         $clients = Client::latest()->get();
-        return view('marketing.index', compact('clients'));
+        return view('marketing.clients.index', compact('clients'));
     }
 
     public function create()
     {
-        return view('marketing.create'); // kalau kamu belum punya, kasih tahu saya, saya buatkan
+        return view('marketing.clients.create'); // kalau kamu belum punya, kasih tahu saya, saya buatkan
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class ClientController extends Controller
     public function edit($id)
 {
     $client = Client::findOrFail($id);
-    return view('marketing.edit', compact('client'));
+    return view('marketing.clients.edit', compact('client'));
 }
 
 public function update(Request $request, $id)

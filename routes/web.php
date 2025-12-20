@@ -6,7 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClientController;
-
+use App\Http\Controllers\LeadController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -47,8 +47,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     
     // ================= MARKETING =================
     Route::middleware('role:marketing')->group(function () {
-        Route::get('/marketing/clients', fn () => 'Client Marketing');
-        Route::get('/marketing/leads', fn () => 'Lead Marketing');
     });
    // routes/web.php
 Route::prefix('marketing')->middleware('auth')->group(function() {
@@ -58,10 +56,16 @@ Route::prefix('marketing')->middleware('auth')->group(function() {
     Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('marketing.clients.edit');
     Route::put('/clients/{id}', [ClientController::class, 'update'])->name('marketing.clients.update');
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('marketing.clients.destroy');
-
-    
     // export
     Route::get('/clients/export', [ClientController::class, 'export'])->name('marketing.clients.export');
+});
+Route::prefix('marketing')->middleware('auth')->group(function () {
+    Route::get('/leads', [LeadController::class, 'index'])->name('marketing.leads.index');
+    Route::get('/leads/create', [LeadController::class, 'create'])->name('marketing.leads.create');
+    Route::post('/leads', [LeadController::class, 'store'])->name('marketing.leads.store');
+    Route::get('/leads/{lead}/edit', [LeadController::class, 'edit'])->name('marketing.leads.edit');
+    Route::put('/leads/{lead}', [LeadController::class, 'update'])->name('marketing.leads.update');
+    Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('marketing.leads.destroy');
 });
 
     // ================= FINANCE =================
