@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\ProposalController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -66,7 +67,22 @@ Route::prefix('marketing')->middleware('auth')->group(function () {
     Route::get('/leads/{lead}/edit', [LeadController::class, 'edit'])->name('marketing.leads.edit');
     Route::put('/leads/{lead}', [LeadController::class, 'update'])->name('marketing.leads.update');
     Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('marketing.leads.destroy');
+    Route::get('/leads/export/excel', [LeadController::class, 'exportExcel'])->name('marketing.leads.export.excel');
+    Route::get('/leads/export/pdf', [LeadController::class, 'exportPdf'])->name('marketing.leads.export.pdf');
 });
+
+Route::prefix('marketing')->middleware(['auth'])->group(function() {
+    Route::get('/proposals', [ProposalController::class, 'index'])->name('marketing.proposals.index');
+    Route::get('/proposals/create', [ProposalController::class, 'create'])->name('marketing.proposals.create');
+    Route::post('/proposals', [ProposalController::class, 'store'])->name('marketing.proposals.store');
+    Route::get('/proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('marketing.proposals.edit');
+    Route::put('/proposals/{proposal}', [ProposalController::class, 'update'])->name('marketing.proposals.update');
+    Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('marketing.proposals.destroy');
+
+    Route::get('/proposals/export-excel', [ProposalController::class, 'exportExcel'])->name('marketing.proposals.exportExcel');
+    Route::get('/proposals/export-pdf', [ProposalController::class, 'exportPDF'])->name('marketing.proposals.exportPDF');
+});
+
 
     // ================= FINANCE =================
     Route::middleware('role:finance')->group(function () {

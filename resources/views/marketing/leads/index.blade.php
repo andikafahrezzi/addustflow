@@ -1,6 +1,8 @@
 
 <h1>Leads</h1>
 <a href="{{ route('marketing.leads.create') }}" class="btn btn-primary">Tambah Lead</a>
+<a href="{{ route('marketing.leads.export.excel') }}" class="btn btn-success">Export Excel</a>
+<a href="{{ route('marketing.leads.export.pdf') }}" class="btn btn-danger">Export PDF</a>
 
 <table class="table mt-3">
     <thead>

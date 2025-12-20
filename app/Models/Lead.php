@@ -19,5 +19,10 @@ class Lead extends Model
     {
         return $this->belongsTo(Client::class);
     }
+    public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
+
 }
 

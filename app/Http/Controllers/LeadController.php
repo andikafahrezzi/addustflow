@@ -6,6 +6,9 @@ use App\Models\Lead;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\LeadsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LeadController extends Controller
 {
@@ -75,4 +78,17 @@ class LeadController extends Controller
         $lead->delete();
         return redirect()->route('marketing.leads.index')->with('success', 'Lead berhasil dihapus.');
     }
+        public function exportExcel()
+    {
+        return Excel::download(new LeadsExport, 'leads.xlsx');
+    }
+
+    // PDF
+    public function exportPdf()
+    {
+        $leads = Lead::with('client', 'creator')->get();
+        $pdf = Pdf::loadView('marketing.leads_pdf', compact('leads')); // view mirip client
+        return $pdf->download('leads.pdf');
+    }
+    
 }
