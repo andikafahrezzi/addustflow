@@ -8,6 +8,8 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\Manager\ManagerProposalController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -45,6 +47,33 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::middleware('role:manager')->group(function () {
         Route::get('/manager/approvals', fn () => 'Approval Manager');
     });
+    // routes/web.php
+Route::middleware(['auth', 'role:manager'])->group(function () {
+    Route::get('/manager/proposals', [ManagerProposalController::class, 'index'])->name('manager.proposals.index');
+    Route::post('/manager/proposals/{proposal}/approve', [ManagerProposalController::class, 'approve'])->name('manager.proposals.approve');
+    Route::post('/manager/proposals/{proposal}/reject', [ManagerProposalController::class, 'reject'])->name('manager.proposals.reject');
+});
+
+Route::middleware(['auth', 'role:manager'])
+    ->prefix('manager')
+    ->group(function () {
+
+    // Projects
+    Route::get('/projects', [ProjectController::class, 'index'])->name('manager.projects.index');
+    Route::get('/projects/create', [ProjectController::class, 'create'])->name('manager.projects.create');
+    Route::get('/projects/show', [ProjectController::class, 'show'])->name('manager.projects.show');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('manager.projects.store');
+    Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('manager.projects.edit');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('manager.projects.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('manager.projects.destroy');
+
+    // Export
+    Route::get('/projects/export/excel', [ProjectController::class, 'exportExcel'])
+        ->name('manager.projects.export.excel');
+    Route::get('/projects/export/pdf', [ProjectController::class, 'exportPdf'])
+        ->name('manager.projects.export.pdf');
+});
+
     
     // ================= MARKETING =================
     Route::middleware('role:marketing')->group(function () {

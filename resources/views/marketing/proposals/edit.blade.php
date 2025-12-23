@@ -30,6 +30,14 @@
                     class="form-control">
             </div>
 
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Proposal Deskripsi</label>
+                <input type="text" name="description" id="descriptionInput"
+                    value="{{ old('description', $proposal->description) }}"
+                    class="form-control">
+            </div>
+            
+
             <!-- Estimated Value -->
             <div class="col-md-6 mb-3">
                 <label class="form-label">Estimated Value (Rp)</label>
@@ -42,7 +50,7 @@
             <div class="col-md-6 mb-3">
                 <label class="form-label">Status</label>
                 <select name="status" class="form-control">
-                    @foreach (['draft','sent','revised','approved','rejected'] as $status)
+                    @foreach (['draft','submitted'] as $status)
                         <option value="{{ $status }}"
                             {{ $proposal->status == $status ? 'selected' : '' }}>
                             {{ ucfirst($status) }}
