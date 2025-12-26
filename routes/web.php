@@ -10,6 +10,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Manager\ManagerProposalController;
+use App\Http\Controllers\Manager\ProjectMemberController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -72,6 +73,30 @@ Route::middleware(['auth', 'role:manager'])
         ->name('manager.projects.export.excel');
     Route::get('/projects/export/pdf', [ProjectController::class, 'exportPdf'])
         ->name('manager.projects.export.pdf');
+});
+// ROUTE: Project Members (Manager Only)
+Route::middleware(['auth','role:manager'])->group(function () {
+
+    Route::prefix('manager/projects/{project}/members')->group(function () {
+
+        Route::get('/', [ProjectMemberController::class, 'index'])
+            ->name('manager.projects.members.index');
+
+        Route::get('/create', [ProjectMemberController::class, 'create'])
+            ->name('manager.projects.members.create');
+
+        Route::post('/', [ProjectMemberController::class, 'store'])
+            ->name('manager.projects.members.store');
+
+        Route::get('/{member}/edit', [ProjectMemberController::class, 'edit'])
+            ->name('manager.projects.members.edit');
+
+        Route::put('/{member}', [ProjectMemberController::class, 'update'])
+            ->name('manager.projects.members.update');
+
+        Route::delete('/{member}', [ProjectMemberController::class, 'destroy'])
+            ->name('manager.projects.members.destroy');
+    });
 });
 
     

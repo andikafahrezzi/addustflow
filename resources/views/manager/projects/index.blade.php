@@ -23,6 +23,7 @@
                 <td>{{ number_format($p->budget) }}</td>
                 <td>{{ $p->status }}</td>
                 <td>
+                    <a href="{{ route('manager.projects.members.index',$p->id) }}" class="btn btn-warning btn-sm">Anggota</a>
                     <a href="{{ route('manager.projects.edit',$p->id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="{{ route('manager.projects.destroy',$p->id) }}" method="POST" style="display:inline">
                         @csrf @method('DELETE')
