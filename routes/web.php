@@ -11,6 +11,8 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Manager\ManagerProposalController;
 use App\Http\Controllers\Manager\ProjectMemberController;
+use App\Http\Controllers\Manager\ManagerExpenseController;
+use App\Http\Controllers\FinanceExpenseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -98,6 +100,24 @@ Route::middleware(['auth','role:manager'])->group(function () {
             ->name('manager.projects.members.destroy');
     });
 });
+
+// EXPENSES (Manager)
+Route::prefix('manager/projects/{project}/expenses')
+    ->name('manager.projects.expenses.')
+    ->group(function () {
+
+    Route::get('/', [ManagerExpenseController::class, 'index'])->name('index');
+
+    Route::get('/create', [ManagerExpenseController::class, 'create'])->name('create');
+    Route::post('/', [ManagerExpenseController::class, 'store'])->name('store');
+
+    Route::get('/{expense}/edit', [ManagerExpenseController::class, 'edit'])->name('edit');
+    Route::put('/{expense}', [ManagerExpenseController::class, 'update'])->name('update');
+
+    Route::delete('/{expense}', [ManagerExpenseController::class, 'destroy'])->name('destroy');
+});
+
+
 
     
     // ================= MARKETING =================
