@@ -14,6 +14,7 @@ use App\Http\Controllers\Manager\ProjectMemberController;
 use App\Http\Controllers\Manager\ManagerExpenseController;
 use App\Http\Controllers\FinanceExpenseController;
 
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -163,6 +164,34 @@ Route::prefix('marketing')->middleware(['auth'])->group(function() {
         Route::get('/finance/invoices', fn () => 'Invoice Finance');
         Route::get('/finance/payments', fn () => 'Payment Finance');
     });
+
+    Route::prefix('finance')->name('finance.')->group(function () {
+
+        // list semua project
+        Route::get('/projects', [FinanceExpenseController::class, 'index'])
+            ->name('projects.index');
+
+        // detail project (tampilkan semua expenses)
+        Route::get('/projects/{project}', [FinanceExpenseController::class, 'show'])
+            ->name('projects.show');
+
+        // approve/reject 1 expense
+        Route::post('/expenses/{expense}/approve', [FinanceExpenseController::class, 'approve'])
+            ->name('expenses.approve');
+
+        Route::post('/expenses/{expense}/reject', [FinanceExpenseController::class, 'reject'])
+            ->name('expenses.reject');
+
+        // approve/reject ALL expenses in project
+        Route::post('/projects/{project}/expenses/approve-all',
+            [FinanceExpenseController::class, 'approveAll'])
+            ->name('expenses.approveAll');
+
+        Route::post('/projects/{project}/expenses/reject-all',
+            [FinanceExpenseController::class, 'rejectAll'])
+            ->name('expenses.rejectAll');
+    });
+
 
     // ================= STAFF =================
     Route::middleware('role:staff')->group(function () {

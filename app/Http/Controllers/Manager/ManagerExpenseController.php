@@ -50,11 +50,13 @@ class ManagerExpenseController extends Controller
         $request->validate([
             'description' => 'required|string',
             'amount' => 'required|numeric|min:0',
+            'status'          => 'pending',
         ]);
 
         $expense->update([
             'description' => $request->description,
             'amount' => $request->amount,
+            'status'      => 'pending',
         ]);
 
         return redirect()->route('manager.projects.expenses.index', $project->id)
