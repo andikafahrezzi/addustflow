@@ -25,6 +25,7 @@
                 <td>
                     <a href="{{ route('manager.projects.members.index',$p->id) }}" class="btn btn-warning btn-sm">Anggota</a>
                     <a href="{{ route('manager.projects.expenses.index',$p->id) }}" class="btn btn-warning btn-sm">expenses</a>
+                    <a href="{{ route('manager.invoices.index',$p->id) }}" class="btn btn-warning btn-sm">Invoices</a>
                     <a href="{{ route('manager.projects.edit',$p->id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="{{ route('manager.projects.destroy',$p->id) }}" method="POST" style="display:inline">
                         @csrf @method('DELETE')

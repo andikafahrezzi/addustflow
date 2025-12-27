@@ -13,6 +13,9 @@ use App\Http\Controllers\Manager\ManagerProposalController;
 use App\Http\Controllers\Manager\ProjectMemberController;
 use App\Http\Controllers\Manager\ManagerExpenseController;
 use App\Http\Controllers\FinanceExpenseController;
+use App\Http\Controllers\Manager\InvoiceController as ManagerInvoiceController;
+use App\Http\Controllers\FinanceInvoiceController;
+
 
 
 Route::get('/', function () {
@@ -118,6 +121,23 @@ Route::prefix('manager/projects/{project}/expenses')
     Route::delete('/{expense}', [ManagerExpenseController::class, 'destroy'])->name('destroy');
 });
 
+Route::prefix('manager')->name('manager.')->group(function () {
+
+    // List invoice per project
+    Route::get('projects/{project}/invoices', 
+        [ManagerInvoiceController::class, 'index'])
+        ->name('invoices.index');
+
+    // Create invoice
+    Route::get('projects/{project}/invoices/create', 
+        [ManagerInvoiceController::class, 'create'])
+        ->name('invoices.create');
+
+    Route::post('projects/{project}/invoices', 
+        [ManagerInvoiceController::class, 'store'])
+        ->name('invoices.store');
+});
+
 
 
     
@@ -191,6 +211,38 @@ Route::prefix('marketing')->middleware(['auth'])->group(function() {
             [FinanceExpenseController::class, 'rejectAll'])
             ->name('expenses.rejectAll');
     });
+Route::prefix('finance')->name('finance.')->group(function () {
+
+    // List semua project yang punya invoice
+    Route::get('invoices/projects', 
+        [FinanceInvoiceController::class, 'projectList'])
+        ->name('invoices.projects');
+
+    // List semua invoice berdasarkan project
+    Route::get('invoices/{project}', 
+        [FinanceInvoiceController::class, 'index'])
+        ->name('invoices.index');
+
+    // Approve invoice
+    Route::put('invoices/{invoice}/approve', 
+        [FinanceInvoiceController::class, 'approve'])
+        ->name('invoices.approve');
+
+    // Reject invoice
+    Route::put('invoices/{invoice}/reject', 
+        [FinanceInvoiceController::class, 'reject'])
+        ->name('invoices.reject');
+
+    // Bulk approve all invoices of a project
+    Route::put('invoices/{project}/approve-all', 
+        [FinanceInvoiceController::class, 'approveAll'])
+        ->name('invoices.approveAll');
+
+    // Bulk reject all invoices of a project
+    Route::put('invoices/{project}/reject-all', 
+        [FinanceInvoiceController::class, 'rejectAll'])
+        ->name('invoices.rejectAll');
+});
 
 
     // ================= STAFF =================
