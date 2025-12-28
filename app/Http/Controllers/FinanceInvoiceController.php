@@ -74,4 +74,41 @@ class FinanceInvoiceController extends Controller
 
         return back()->with('success', 'All invoices rejected.');
     }
+    public function show(Invoice $invoice)
+    {
+        $project = $invoice->project;
+        $expenses = $project->expenses()
+            ->orderBy('created_at','asc')
+            ->get();
+
+        return view('finance.invoices.showClient', compact('invoice','project','expenses'));
+    }
+
+    /** Send invoice ke client */
+    public function send(Invoice $invoice)
+    {
+        if ($invoice->status !== 'approved') {
+            return back()->with('error','Invoice harus di-approve dulu.');
+        }
+
+        $invoice->update([
+            'status' => 'sent',
+        ]);
+
+        return back()->with('success','Invoice berhasil dikirim ke client.');
+    }
+
+    /** Mark as Paid */
+    public function paid(Invoice $invoice)
+    {
+        if ($invoice->status !== 'sent') {
+            return back()->with('error','Invoice harus dikirim sebelum ditandai dibayar.');
+        }
+
+        $invoice->update([
+            'status' => 'paid',
+        ]);
+
+        return back()->with('success','Invoice berhasil ditandai sebagai dibayar.');
+    }
 }

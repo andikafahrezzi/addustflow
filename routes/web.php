@@ -245,6 +245,30 @@ Route::prefix('finance')->name('finance.')->group(function () {
 });
 
 
+Route::prefix('finance')->middleware(['auth','role:finance'])->group(function () {
+
+    // daftar semua invoice
+    Route::get('/invoices', [FinanceInvoiceController::class, 'index'])
+        ->name('finance.invoices.index');
+
+    // detail invoice termasuk list expenses
+    Route::get('/invoices/client/{invoice}', [FinanceInvoiceController::class, 'show'])
+        ->name('finance.invoices.showClient');
+
+    // approve invoice (ubah status → approved)
+    Route::post('/invoices/client/{invoice}/approve', [FinanceInvoiceController::class, 'approve'])
+        ->name('finance.invoices.approve');
+
+    // send invoice ke client (ubah status → sent)
+    Route::post('/invoices/client/{invoice}/send', [FinanceInvoiceController::class, 'send'])
+        ->name('finance.invoices.send');
+
+    // mark as paid
+    Route::post('/invoices/client/{invoice}/paid', [FinanceInvoiceController::class, 'paid'])
+        ->name('finance.invoices.paid');
+});
+
+
     // ================= STAFF =================
     Route::middleware('role:staff')->group(function () {
         Route::get('/staff/projects', fn () => 'Project Staff');
