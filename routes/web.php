@@ -15,6 +15,7 @@ use App\Http\Controllers\Manager\ManagerExpenseController;
 use App\Http\Controllers\FinanceExpenseController;
 use App\Http\Controllers\Manager\InvoiceController as ManagerInvoiceController;
 use App\Http\Controllers\FinanceInvoiceController;
+use App\Http\Controllers\FinancePaymentController;
 
 
 
@@ -267,6 +268,36 @@ Route::prefix('finance')->middleware(['auth','role:finance'])->group(function ()
     Route::post('/invoices/client/{invoice}/paid', [FinanceInvoiceController::class, 'paid'])
         ->name('finance.invoices.paid');
 });
+// routes/web.php
+
+Route::prefix('finance')->middleware(['auth','role:finance'])->group(function () {
+
+    // ✔ GLOBAL payment list
+    Route::get('/payments', 
+        [FinancePaymentController::class, 'all'])
+        ->name('finance.payments.all');
+
+    // ✔ Payment per invoice
+    Route::get('/invoice/{invoice}/payments', 
+        [FinancePaymentController::class, 'index'])
+        ->name('finance.payments.index');
+
+    // Tambah payment
+    Route::get('/invoice/{invoice}/payments/create', 
+        [FinancePaymentController::class, 'create'])
+        ->name('finance.payments.create');
+
+    // Simpan payment
+    Route::post('/invoice/{invoice}/payments', 
+        [FinancePaymentController::class, 'store'])
+        ->name('finance.payments.store');
+
+    // Hapus payment
+    Route::delete('/invoice/{invoice}/payments/{payment}', 
+        [FinancePaymentController::class, 'destroy'])
+        ->name('finance.payments.destroy');
+});
+
 
 
     // ================= STAFF =================
