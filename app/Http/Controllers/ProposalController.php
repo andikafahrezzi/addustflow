@@ -19,7 +19,10 @@ class ProposalController extends Controller
 
     public function create()
     {
-        $leads = Lead::with('client')->get();
+        $leads = Lead::whereIn('status', ['qualified', 'contacted'])
+                 ->orWhere('status', 'approved') // atau status tertentu
+                 ->with('client')
+                 ->get();
         return view('marketing.proposals.create', compact('leads'));
     }
 
@@ -47,7 +50,10 @@ class ProposalController extends Controller
 
     public function edit(Proposal $proposal)
     {
-        $leads = Lead::with('client')->get();
+        $leads = Lead::whereIn('status', ['qualified', 'contacted'])
+                 ->orWhere('status', 'approved') // atau status tertentu
+                 ->with('client')
+                 ->get();
         return view('marketing.proposals.edit', compact('proposal', 'leads'));
     }
 
