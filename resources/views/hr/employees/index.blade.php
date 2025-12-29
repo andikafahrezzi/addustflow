@@ -21,6 +21,8 @@
         <td>{{ $e->status }}</td>
 
         <td>
+            <a href="{{ route('hr.salaries.index', $e->id) }}"
+                class="btn btn-warning btn-sm">Salary</a>
             <a href="{{ route('hr.employees.edit', $e->id) }}"
                 class="btn btn-warning btn-sm">Edit</a>
 

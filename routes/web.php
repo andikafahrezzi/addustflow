@@ -17,6 +17,8 @@ use App\Http\Controllers\Manager\InvoiceController as ManagerInvoiceController;
 use App\Http\Controllers\FinanceInvoiceController;
 use App\Http\Controllers\FinancePaymentController;
 use App\Http\Controllers\HREmployeeController;
+use App\Http\Controllers\HRSalaryController;
+
 
 
 
@@ -334,5 +336,39 @@ Route::prefix('finance')->middleware(['auth','role:finance'])->group(function ()
         Route::delete('/employees/{employee}', [HREmployeeController::class, 'destroy'])
             ->name('hr.employees.destroy');
     });
+
+
+Route::prefix('hr')->middleware(['auth', 'role:hr'])->group(function () {
+
+    // list salary per employee
+    Route::get('/employees/{employee}/salaries', 
+        [HRSalaryController::class, 'index'])
+        ->name('hr.salaries.index');
+
+    // form tambah salary
+    Route::get('/employees/{employee}/salaries/create',
+        [HRSalaryController::class, 'create'])
+        ->name('hr.salaries.create');
+
+    // simpan salary
+    Route::post('/employees/{employee}/salaries',
+        [HRSalaryController::class, 'store'])
+        ->name('hr.salaries.store');
+
+    // edit salary
+    Route::get('/salaries/{salary}/edit',
+        [HRSalaryController::class, 'edit'])
+        ->name('hr.salaries.edit');
+
+    // update salary
+    Route::put('/salaries/{salary}',
+        [HRSalaryController::class, 'update'])
+        ->name('hr.salaries.update');
+
+    // delete salary
+    Route::delete('/salaries/{salary}',
+        [HRSalaryController::class, 'destroy'])
+        ->name('hr.salaries.destroy');
+});
 
 });
