@@ -16,6 +16,8 @@ use App\Http\Controllers\FinanceExpenseController;
 use App\Http\Controllers\Manager\InvoiceController as ManagerInvoiceController;
 use App\Http\Controllers\FinanceInvoiceController;
 use App\Http\Controllers\FinancePaymentController;
+use App\Http\Controllers\HREmployeeController;
+
 
 
 
@@ -303,6 +305,34 @@ Route::prefix('finance')->middleware(['auth','role:finance'])->group(function ()
     // ================= STAFF =================
     Route::middleware('role:staff')->group(function () {
         Route::get('/staff/projects', fn () => 'Project Staff');
+    });
+
+    // ================= HR =================
+    Route::prefix('hr')->middleware(['auth','role:hr'])->group(function () {
+
+        // List employees
+        Route::get('/employees', [HREmployeeController::class, 'index'])
+            ->name('hr.employees.index');
+
+        // Create
+        Route::get('/employees/create', [HREmployeeController::class, 'create'])
+            ->name('hr.employees.create');
+        Route::post('/employees', [HREmployeeController::class, 'store'])
+            ->name('hr.employees.store');
+
+        // Edit
+        Route::get('/employees/{employee}/edit', [HREmployeeController::class, 'edit'])
+            ->name('hr.employees.edit');
+        Route::put('/employees/{employee}', [HREmployeeController::class, 'update'])
+            ->name('hr.employees.update');
+
+        // Nonaktifkan
+        Route::put('/employees/{employee}/deactivate', [HREmployeeController::class, 'deactivate'])
+            ->name('hr.employees.deactivate');
+
+        // Hapus permanen
+        Route::delete('/employees/{employee}', [HREmployeeController::class, 'destroy'])
+            ->name('hr.employees.destroy');
     });
 
 });

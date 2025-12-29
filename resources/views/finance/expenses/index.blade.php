@@ -27,7 +27,7 @@
 
             <a href="{{ route('finance.invoices.index', $p->id) }}"
                 class="btn btn-primary btn-sm">invoice Internal</a>
-                @if($clientInvoice)
+            @if($clientInvoice)
             <a href="{{ route('finance.payments.index',$clientInvoice->id) }}"
                 class="btn btn-primary btn-sm">
                 Invoice Client
