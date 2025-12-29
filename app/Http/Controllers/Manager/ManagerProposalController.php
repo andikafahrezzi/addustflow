@@ -12,8 +12,12 @@ class ManagerProposalController extends Controller
 {
     public function index()
     {
-        $proposals = Proposal::where('status', 'submitted')->with('lead.client')->get();
-
+        // Ambil proposal yang statusnya submitted, approved, atau rejected
+        $proposals = Proposal::with('lead.client')
+                             ->whereIn('status', ['submitted', 'approved', 'rejected'])
+                             ->latest()
+                             ->get();
+        
         return view('manager.proposals.index', compact('proposals'));
     }
 
