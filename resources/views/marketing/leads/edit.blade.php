@@ -1,4 +1,9 @@
+@extends('layouts.marketing')
 
+@section('title', 'Campaign Dashboard')
+@section('page-title', 'Campaign Overview')
+
+@section('content')
 <h1>Edit Lead</h1>
 <form action="{{ route('marketing.leads.update', $lead) }}" method="POST">
     @csrf
@@ -38,4 +43,6 @@
 
     <button class="btn btn-primary">Update</button>
 </form>
+@endsection
+
 

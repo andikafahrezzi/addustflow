@@ -1,4 +1,10 @@
 
+@extends('layouts.marketing')
+
+@section('title', 'Campaign Dashboard')
+@section('page-title', 'Campaign Overview')
+
+@section('content')
 <div class="container">
 
     <h3 class="mb-4">Edit Proposal</h3>
@@ -74,3 +80,5 @@
         document.getElementById('titleInput').value = "Proposal for " + selected;
     });
 </script>
+@endsection
+

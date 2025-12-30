@@ -1,4 +1,9 @@
+@extends('layouts.marketing')
 
+@section('title', 'Campaign Dashboard')
+@section('page-title', 'Campaign Overview')
+
+@section('content')
 <div class="container">
 
     <h2 class="mb-4">Edit Client</h2>
@@ -38,4 +43,6 @@
     </form>
 
 </div>
+
+@endsection
 

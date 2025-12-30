@@ -1,3 +1,9 @@
+@extends('layouts.marketing')
+
+@section('title', 'Campaign Dashboard')
+@section('page-title', 'Campaign Overview')
+
+@section('content')
 <h1>Tambah Lead</h1>
 <form action="{{ route('marketing.leads.store') }}" method="POST">
     @csrf
@@ -36,3 +42,5 @@
 
     <button class="btn btn-primary">Simpan</button>
 </form>
+@endsection
+

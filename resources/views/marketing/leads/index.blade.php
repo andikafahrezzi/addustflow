@@ -1,4 +1,10 @@
 
+@extends('layouts.marketing')
+
+@section('title', 'Campaign Dashboard')
+@section('page-title', 'Campaign Overview')
+
+@section('content')
 <h1>Leads</h1>
 <a href="{{ route('marketing.leads.create') }}" class="btn btn-primary">Tambah Lead</a>
 <a href="{{ route('marketing.leads.export.excel') }}" class="btn btn-success">Export Excel</a>
@@ -34,4 +40,6 @@
 </table>
 
 {{ $leads->links() }}
+@endsection
+
 

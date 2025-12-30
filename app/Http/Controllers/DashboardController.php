@@ -29,6 +29,9 @@ class DashboardController extends Controller
         if ($role === 'staff') {
             return view('staff.dashboard');
         }
+        if ($role === 'hr') {
+            return view('hr.dashboard');
+        }
 
         abort(403);
     }

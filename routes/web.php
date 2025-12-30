@@ -38,10 +38,10 @@ Route::middleware('auth')->group(function () {
 
     // ================= ADMIN =================
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/audit-logs', [AuditLogController::class, 'index'])
-         ->name('admin.audit.logs');
-});
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/admin/audit-logs', [AuditLogController::class, 'index'])
+            ->name('admin.audit.logs');
+    });
 
     Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
@@ -60,15 +60,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/manager/approvals', fn () => 'Approval Manager');
     });
     // routes/web.php
-Route::middleware(['auth', 'role:manager'])->group(function () {
-    Route::get('/manager/proposals', [ManagerProposalController::class, 'index'])->name('manager.proposals.index');
-    Route::post('/manager/proposals/{proposal}/approve', [ManagerProposalController::class, 'approve'])->name('manager.proposals.approve');
-    Route::post('/manager/proposals/{proposal}/reject', [ManagerProposalController::class, 'reject'])->name('manager.proposals.reject');
-});
+    Route::middleware(['auth', 'role:manager'])->group(function () {
+        Route::get('/manager/proposals', [ManagerProposalController::class, 'index'])->name('manager.proposals.index');
+        Route::post('/manager/proposals/{proposal}/approve', [ManagerProposalController::class, 'approve'])->name('manager.proposals.approve');
+        Route::post('/manager/proposals/{proposal}/reject', [ManagerProposalController::class, 'reject'])->name('manager.proposals.reject');
+    });
 
-Route::middleware(['auth', 'role:manager'])
-    ->prefix('manager')
-    ->group(function () {
+    Route::middleware(['auth', 'role:manager'])
+        ->prefix('manager')
+        ->group(function () {
 
     // Projects
     Route::get('/projects', [ProjectController::class, 'index'])->name('manager.projects.index');
@@ -84,64 +84,64 @@ Route::middleware(['auth', 'role:manager'])
         ->name('manager.projects.export.excel');
     Route::get('/projects/export/pdf', [ProjectController::class, 'exportPdf'])
         ->name('manager.projects.export.pdf');
-});
-// ROUTE: Project Members (Manager Only)
-Route::middleware(['auth','role:manager'])->group(function () {
-
-    Route::prefix('manager/projects/{project}/members')->group(function () {
-
-        Route::get('/', [ProjectMemberController::class, 'index'])
-            ->name('manager.projects.members.index');
-
-        Route::get('/create', [ProjectMemberController::class, 'create'])
-            ->name('manager.projects.members.create');
-
-        Route::post('/', [ProjectMemberController::class, 'store'])
-            ->name('manager.projects.members.store');
-
-        Route::get('/{member}/edit', [ProjectMemberController::class, 'edit'])
-            ->name('manager.projects.members.edit');
-
-        Route::put('/{member}', [ProjectMemberController::class, 'update'])
-            ->name('manager.projects.members.update');
-
-        Route::delete('/{member}', [ProjectMemberController::class, 'destroy'])
-            ->name('manager.projects.members.destroy');
     });
-});
+    // ROUTE: Project Members (Manager Only)
+    Route::middleware(['auth','role:manager'])->group(function () {
 
-// EXPENSES (Manager)
-Route::prefix('manager/projects/{project}/expenses')
-    ->name('manager.projects.expenses.')
-    ->group(function () {
+        Route::prefix('manager/projects/{project}/members')->group(function () {
 
-    Route::get('/', [ManagerExpenseController::class, 'index'])->name('index');
+            Route::get('/', [ProjectMemberController::class, 'index'])
+                ->name('manager.projects.members.index');
 
-    Route::get('/create', [ManagerExpenseController::class, 'create'])->name('create');
-    Route::post('/', [ManagerExpenseController::class, 'store'])->name('store');
+            Route::get('/create', [ProjectMemberController::class, 'create'])
+                ->name('manager.projects.members.create');
 
-    Route::get('/{expense}/edit', [ManagerExpenseController::class, 'edit'])->name('edit');
-    Route::put('/{expense}', [ManagerExpenseController::class, 'update'])->name('update');
+            Route::post('/', [ProjectMemberController::class, 'store'])
+                ->name('manager.projects.members.store');
 
-    Route::delete('/{expense}', [ManagerExpenseController::class, 'destroy'])->name('destroy');
-});
+            Route::get('/{member}/edit', [ProjectMemberController::class, 'edit'])
+                ->name('manager.projects.members.edit');
 
-Route::prefix('manager')->name('manager.')->group(function () {
+            Route::put('/{member}', [ProjectMemberController::class, 'update'])
+                ->name('manager.projects.members.update');
 
-    // List invoice per project
-    Route::get('projects/{project}/invoices', 
-        [ManagerInvoiceController::class, 'index'])
-        ->name('invoices.index');
+            Route::delete('/{member}', [ProjectMemberController::class, 'destroy'])
+                ->name('manager.projects.members.destroy');
+        });
+    });
 
-    // Create invoice
-    Route::get('projects/{project}/invoices/create', 
-        [ManagerInvoiceController::class, 'create'])
-        ->name('invoices.create');
+    // EXPENSES (Manager)
+    Route::prefix('manager/projects/{project}/expenses')
+        ->name('manager.projects.expenses.')
+        ->group(function () {
 
-    Route::post('projects/{project}/invoices', 
-        [ManagerInvoiceController::class, 'store'])
-        ->name('invoices.store');
-});
+        Route::get('/', [ManagerExpenseController::class, 'index'])->name('index');
+
+        Route::get('/create', [ManagerExpenseController::class, 'create'])->name('create');
+        Route::post('/', [ManagerExpenseController::class, 'store'])->name('store');
+
+        Route::get('/{expense}/edit', [ManagerExpenseController::class, 'edit'])->name('edit');
+        Route::put('/{expense}', [ManagerExpenseController::class, 'update'])->name('update');
+
+        Route::delete('/{expense}', [ManagerExpenseController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('manager')->name('manager.')->group(function () {
+
+        // List invoice per project
+        Route::get('projects/{project}/invoices', 
+            [ManagerInvoiceController::class, 'index'])
+            ->name('invoices.index');
+
+        // Create invoice
+        Route::get('projects/{project}/invoices/create', 
+            [ManagerInvoiceController::class, 'create'])
+            ->name('invoices.create');
+
+        Route::post('projects/{project}/invoices', 
+            [ManagerInvoiceController::class, 'store'])
+            ->name('invoices.store');
+    });
 
 
 
@@ -150,38 +150,38 @@ Route::prefix('manager')->name('manager.')->group(function () {
     Route::middleware('role:marketing')->group(function () {
     });
    // routes/web.php
-Route::prefix('marketing')->middleware('auth')->group(function() {
-    Route::get('/clients', [ClientController::class, 'index'])->name('marketing.clients.index');
-    Route::get('/clients/create', [ClientController::class, 'create'])->name('marketing.clients.create');
-    Route::post('/clients', [ClientController::class, 'store'])->name('marketing.clients.store');
-    Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('marketing.clients.edit');
-    Route::put('/clients/{id}', [ClientController::class, 'update'])->name('marketing.clients.update');
-    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('marketing.clients.destroy');
-    // export
-    Route::get('/clients/export', [ClientController::class, 'export'])->name('marketing.clients.export');
-});
-Route::prefix('marketing')->middleware('auth')->group(function () {
-    Route::get('/leads', [LeadController::class, 'index'])->name('marketing.leads.index');
-    Route::get('/leads/create', [LeadController::class, 'create'])->name('marketing.leads.create');
-    Route::post('/leads', [LeadController::class, 'store'])->name('marketing.leads.store');
-    Route::get('/leads/{lead}/edit', [LeadController::class, 'edit'])->name('marketing.leads.edit');
-    Route::put('/leads/{lead}', [LeadController::class, 'update'])->name('marketing.leads.update');
-    Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('marketing.leads.destroy');
-    Route::get('/leads/export/excel', [LeadController::class, 'exportExcel'])->name('marketing.leads.export.excel');
-    Route::get('/leads/export/pdf', [LeadController::class, 'exportPdf'])->name('marketing.leads.export.pdf');
-});
+    Route::prefix('marketing')->middleware('auth')->group(function() {
+        Route::get('/clients', [ClientController::class, 'index'])->name('marketing.clients.index');
+        Route::get('/clients/create', [ClientController::class, 'create'])->name('marketing.clients.create');
+        Route::post('/clients', [ClientController::class, 'store'])->name('marketing.clients.store');
+        Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('marketing.clients.edit');
+        Route::put('/clients/{id}', [ClientController::class, 'update'])->name('marketing.clients.update');
+        Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('marketing.clients.destroy');
+        // export
+        Route::get('/clients/export', [ClientController::class, 'export'])->name('marketing.clients.export');
+    });
+    Route::prefix('marketing')->middleware('auth')->group(function () {
+        Route::get('/leads', [LeadController::class, 'index'])->name('marketing.leads.index');
+        Route::get('/leads/create', [LeadController::class, 'create'])->name('marketing.leads.create');
+        Route::post('/leads', [LeadController::class, 'store'])->name('marketing.leads.store');
+        Route::get('/leads/{lead}/edit', [LeadController::class, 'edit'])->name('marketing.leads.edit');
+        Route::put('/leads/{lead}', [LeadController::class, 'update'])->name('marketing.leads.update');
+        Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('marketing.leads.destroy');
+        Route::get('/leads/export/excel', [LeadController::class, 'exportExcel'])->name('marketing.leads.export.excel');
+        Route::get('/leads/export/pdf', [LeadController::class, 'exportPdf'])->name('marketing.leads.export.pdf');
+    });
 
-Route::prefix('marketing')->middleware(['auth'])->group(function() {
-    Route::get('/proposals', [ProposalController::class, 'index'])->name('marketing.proposals.index');
-    Route::get('/proposals/create', [ProposalController::class, 'create'])->name('marketing.proposals.create');
-    Route::post('/proposals', [ProposalController::class, 'store'])->name('marketing.proposals.store');
-    Route::get('/proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('marketing.proposals.edit');
-    Route::put('/proposals/{proposal}', [ProposalController::class, 'update'])->name('marketing.proposals.update');
-    Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('marketing.proposals.destroy');
+    Route::prefix('marketing')->middleware(['auth'])->group(function() {
+        Route::get('/proposals', [ProposalController::class, 'index'])->name('marketing.proposals.index');
+        Route::get('/proposals/create', [ProposalController::class, 'create'])->name('marketing.proposals.create');
+        Route::post('/proposals', [ProposalController::class, 'store'])->name('marketing.proposals.store');
+        Route::get('/proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('marketing.proposals.edit');
+        Route::put('/proposals/{proposal}', [ProposalController::class, 'update'])->name('marketing.proposals.update');
+        Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('marketing.proposals.destroy');
 
-    Route::get('/proposals/export-excel', [ProposalController::class, 'exportExcel'])->name('marketing.proposals.exportExcel');
-    Route::get('/proposals/export-pdf', [ProposalController::class, 'exportPDF'])->name('marketing.proposals.exportPDF');
-});
+        Route::get('/proposals/export-excel', [ProposalController::class, 'exportExcel'])->name('marketing.proposals.exportExcel');
+        Route::get('/proposals/export-pdf', [ProposalController::class, 'exportPDF'])->name('marketing.proposals.exportPDF');
+    });
 
 
     // ================= FINANCE =================
@@ -216,91 +216,91 @@ Route::prefix('marketing')->middleware(['auth'])->group(function() {
             [FinanceExpenseController::class, 'rejectAll'])
             ->name('expenses.rejectAll');
     });
-Route::prefix('finance')->name('finance.')->group(function () {
+    Route::prefix('finance')->name('finance.')->group(function () {
 
-    // List semua project yang punya invoice
-    Route::get('invoices/projects', 
-        [FinanceInvoiceController::class, 'projectList'])
-        ->name('invoices.projects');
+        // List semua project yang punya invoice
+        Route::get('invoices/projects', 
+            [FinanceInvoiceController::class, 'projectList'])
+            ->name('invoices.projects');
 
-    // List semua invoice berdasarkan project
-    Route::get('invoices/{project}', 
-        [FinanceInvoiceController::class, 'index'])
-        ->name('invoices.index');
+        // List semua invoice berdasarkan project
+        Route::get('invoices/{project}', 
+            [FinanceInvoiceController::class, 'index'])
+            ->name('invoices.index');
 
-    // Approve invoice
-    Route::put('invoices/{invoice}/approve', 
-        [FinanceInvoiceController::class, 'approve'])
-        ->name('invoices.approve');
+        // Approve invoice
+        Route::put('invoices/{invoice}/approve', 
+            [FinanceInvoiceController::class, 'approve'])
+            ->name('invoices.approve');
 
-    // Reject invoice
-    Route::put('invoices/{invoice}/reject', 
-        [FinanceInvoiceController::class, 'reject'])
-        ->name('invoices.reject');
+        // Reject invoice
+        Route::put('invoices/{invoice}/reject', 
+            [FinanceInvoiceController::class, 'reject'])
+            ->name('invoices.reject');
 
-    // Bulk approve all invoices of a project
-    Route::put('invoices/{project}/approve-all', 
-        [FinanceInvoiceController::class, 'approveAll'])
-        ->name('invoices.approveAll');
+        // Bulk approve all invoices of a project
+        Route::put('invoices/{project}/approve-all', 
+            [FinanceInvoiceController::class, 'approveAll'])
+            ->name('invoices.approveAll');
 
-    // Bulk reject all invoices of a project
-    Route::put('invoices/{project}/reject-all', 
-        [FinanceInvoiceController::class, 'rejectAll'])
-        ->name('invoices.rejectAll');
-});
+        // Bulk reject all invoices of a project
+        Route::put('invoices/{project}/reject-all', 
+            [FinanceInvoiceController::class, 'rejectAll'])
+            ->name('invoices.rejectAll');
+    });
 
 
-Route::prefix('finance')->middleware(['auth','role:finance'])->group(function () {
+    Route::prefix('finance')->middleware(['auth','role:finance'])->group(function () {
 
-    // daftar semua invoice
-    Route::get('/invoices', [FinanceInvoiceController::class, 'index'])
-        ->name('finance.invoices.index');
+        // daftar semua invoice
+        Route::get('/invoices', [FinanceInvoiceController::class, 'index'])
+            ->name('finance.invoices.index');
 
-    // detail invoice termasuk list expenses
-    Route::get('/invoices/client/{invoice}', [FinanceInvoiceController::class, 'show'])
-        ->name('finance.invoices.showClient');
+        // detail invoice termasuk list expenses
+        Route::get('/invoices/client/{invoice}', [FinanceInvoiceController::class, 'show'])
+            ->name('finance.invoices.showClient');
 
-    // approve invoice (ubah status → approved)
-    Route::post('/invoices/client/{invoice}/approve', [FinanceInvoiceController::class, 'approve'])
-        ->name('finance.invoices.approve');
+        // approve invoice (ubah status → approved)
+        Route::post('/invoices/client/{invoice}/approve', [FinanceInvoiceController::class, 'approve'])
+            ->name('finance.invoices.approve');
 
-    // send invoice ke client (ubah status → sent)
-    Route::post('/invoices/client/{invoice}/send', [FinanceInvoiceController::class, 'send'])
-        ->name('finance.invoices.send');
+        // send invoice ke client (ubah status → sent)
+        Route::post('/invoices/client/{invoice}/send', [FinanceInvoiceController::class, 'send'])
+            ->name('finance.invoices.send');
 
-    // mark as paid
-    Route::post('/invoices/client/{invoice}/paid', [FinanceInvoiceController::class, 'paid'])
-        ->name('finance.invoices.paid');
-});
-// routes/web.php
+        // mark as paid
+        Route::post('/invoices/client/{invoice}/paid', [FinanceInvoiceController::class, 'paid'])
+            ->name('finance.invoices.paid');
+    });
 
-Route::prefix('finance')->middleware(['auth','role:finance'])->group(function () {
 
-    // ✔ GLOBAL payment list
-    Route::get('/payments', 
-        [FinancePaymentController::class, 'all'])
-        ->name('finance.payments.all');
+    Route::prefix('finance')->middleware(['auth','role:finance'])->group(function () {
 
-    // ✔ Payment per invoice
-    Route::get('/invoice/{invoice}/payments', 
-        [FinancePaymentController::class, 'index'])
-        ->name('finance.payments.index');
+        // ✔ GLOBAL payment list
+        Route::get('/payments', 
+            [FinancePaymentController::class, 'all'])
+            ->name('finance.payments.all');
 
-    // Tambah payment
-    Route::get('/invoice/{invoice}/payments/create', 
-        [FinancePaymentController::class, 'create'])
-        ->name('finance.payments.create');
+        // ✔ Payment per invoice
+        Route::get('/invoice/{invoice}/payments', 
+            [FinancePaymentController::class, 'index'])
+            ->name('finance.payments.index');
 
-    // Simpan payment
-    Route::post('/invoice/{invoice}/payments', 
-        [FinancePaymentController::class, 'store'])
-        ->name('finance.payments.store');
+        // Tambah payment
+        Route::get('/invoice/{invoice}/payments/create', 
+            [FinancePaymentController::class, 'create'])
+            ->name('finance.payments.create');
 
-    // Hapus payment
-    Route::delete('/invoice/{invoice}/payments/{payment}', 
-        [FinancePaymentController::class, 'destroy'])
-        ->name('finance.payments.destroy');
-});
+        // Simpan payment
+        Route::post('/invoice/{invoice}/payments', 
+            [FinancePaymentController::class, 'store'])
+            ->name('finance.payments.store');
+
+        // Hapus payment
+        Route::delete('/invoice/{invoice}/payments/{payment}', 
+            [FinancePaymentController::class, 'destroy'])
+            ->name('finance.payments.destroy');
+    });
 
 
 
@@ -338,37 +338,37 @@ Route::prefix('finance')->middleware(['auth','role:finance'])->group(function ()
     });
 
 
-Route::prefix('hr')->middleware(['auth', 'role:hr'])->group(function () {
+    Route::prefix('hr')->middleware(['auth', 'role:hr'])->group(function () {
 
-    // list salary per employee
-    Route::get('/employees/{employee}/salaries', 
-        [HRSalaryController::class, 'index'])
-        ->name('hr.salaries.index');
+        // list salary per employee
+        Route::get('/employees/{employee}/salaries', 
+            [HRSalaryController::class, 'index'])
+            ->name('hr.salaries.index');
 
-    // form tambah salary
-    Route::get('/employees/{employee}/salaries/create',
-        [HRSalaryController::class, 'create'])
-        ->name('hr.salaries.create');
+        // form tambah salary
+        Route::get('/employees/{employee}/salaries/create',
+            [HRSalaryController::class, 'create'])
+            ->name('hr.salaries.create');
 
-    // simpan salary
-    Route::post('/employees/{employee}/salaries',
-        [HRSalaryController::class, 'store'])
-        ->name('hr.salaries.store');
+        // simpan salary
+        Route::post('/employees/{employee}/salaries',
+            [HRSalaryController::class, 'store'])
+            ->name('hr.salaries.store');
 
-    // edit salary
-    Route::get('/salaries/{salary}/edit',
-        [HRSalaryController::class, 'edit'])
-        ->name('hr.salaries.edit');
+        // edit salary
+        Route::get('/salaries/{salary}/edit',
+            [HRSalaryController::class, 'edit'])
+            ->name('hr.salaries.edit');
 
-    // update salary
-    Route::put('/salaries/{salary}',
-        [HRSalaryController::class, 'update'])
-        ->name('hr.salaries.update');
+        // update salary
+        Route::put('/salaries/{salary}',
+            [HRSalaryController::class, 'update'])
+            ->name('hr.salaries.update');
 
-    // delete salary
-    Route::delete('/salaries/{salary}',
-        [HRSalaryController::class, 'destroy'])
-        ->name('hr.salaries.destroy');
-});
+        // delete salary
+        Route::delete('/salaries/{salary}',
+            [HRSalaryController::class, 'destroy'])
+            ->name('hr.salaries.destroy');
+    });
 
 });
