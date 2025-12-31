@@ -1,3 +1,5 @@
+@php use Illuminate\Support\Str; @endphp
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -165,10 +167,14 @@
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition">
                             <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                JD
+                               {{ Str::of(auth()->user()->name)
+                                    ->split('/\s+/')
+                                    ->map(fn($w) => strtoupper($w[0]))
+                                    ->take(2)
+                                    ->join('') }}                        
                             </div>
                             <div class="hidden md:block text-left">
-                                <p class="text-sm font-semibold text-gray-800">John Doe</p>
+                                <p class="text-sm font-semibold text-gray-800">{{ auth()->user()->name }}</p>
                                 <p class="text-xs text-gray-500">Marketing</p>
                             </div>
                             <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

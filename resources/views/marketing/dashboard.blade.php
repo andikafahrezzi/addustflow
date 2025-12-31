@@ -7,7 +7,7 @@
     <!-- Page Header -->
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-gray-800">Marketing Dashboard</h1>
-        <p class="text-gray-600 mt-1">Welcome back! Here's what's happening with your marketing activities.</p>
+        <p class="text-gray-600 mt-1">Welcome back {{ auth()->user()->name }}! Here's what's happening with your marketing activities.</p>
     </div>
 
     <!-- Stats Cards -->
