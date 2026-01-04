@@ -21,6 +21,14 @@ class ProjectController extends Controller
 
         return view('manager.projects.index', compact('projects'));
     }
+    public function indexMembers()
+    {
+        $projects = Project::with(['proposal', 'client'])
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+
+        return view('manager.project_members.indexMembers', compact('projects'));
+    }
 
     public function create()
     {

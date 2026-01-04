@@ -26,6 +26,12 @@ class FinanceInvoiceController extends Controller
 
         return view('finance.invoices.index', compact('project', 'invoices','expenses', 'total'));
     }
+    public function indexInvoices(Project $project)
+    {
+       $projects = Project::orderBy('created_at', 'desc')->get();
+        return view('finance.invoices.indexInvoices', compact('projects'));
+    }
+    
 
     // Approve single invoice
     public function approve(Invoice $invoice)

@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
 
     // Projects
     Route::get('/projects', [ProjectController::class, 'index'])->name('manager.projects.index');
+    Route::get('/team', [ProjectController::class, 'indexMembers'])->name('manager.project_members.indexMembers');
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('manager.projects.create');
     Route::get('/projects/show', [ProjectController::class, 'show'])->name('manager.projects.show');
     Route::post('/projects', [ProjectController::class, 'store'])->name('manager.projects.store');
@@ -196,6 +197,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/projects', [FinanceExpenseController::class, 'index'])
             ->name('projects.index');
 
+        Route::get('/expenses', [FinanceExpenseController::class, 'indexExpenses'])
+            ->name('expenses.indexExpenses');
+
         // detail project (tampilkan semua expenses)
         Route::get('/projects/{project}', [FinanceExpenseController::class, 'show'])
             ->name('projects.show');
@@ -256,6 +260,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/invoices', [FinanceInvoiceController::class, 'index'])
             ->name('finance.invoices.index');
 
+        Route::get('/invoices', [FinanceInvoiceController::class, 'indexInvoices'])
+            ->name('finance.invoices.indexInvoices');
         // detail invoice termasuk list expenses
         Route::get('/invoices/client/{invoice}', [FinanceInvoiceController::class, 'show'])
             ->name('finance.invoices.showClient');

@@ -12,6 +12,11 @@ class FinanceExpenseController extends Controller
         $projects = Project::orderBy('created_at', 'desc')->get();
         return view('finance.expenses.index', compact('projects'));
     }
+    public function indexExpenses()
+    {
+        $projects = Project::orderBy('created_at', 'desc')->get();
+        return view('finance.expenses.indexExpenses', compact('projects'));
+    }
 
     public function show(Project $project)
     {
