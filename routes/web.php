@@ -13,6 +13,7 @@ use App\Http\Controllers\Manager\ManagerProposalController;
 use App\Http\Controllers\Manager\ProjectMemberController;
 use App\Http\Controllers\Manager\ManagerExpenseController;
 use App\Http\Controllers\FinanceExpenseController;
+use App\Http\Controllers\FinancePayrollController;
 use App\Http\Controllers\Manager\InvoiceController as ManagerInvoiceController;
 use App\Http\Controllers\FinanceInvoiceController;
 use App\Http\Controllers\FinancePaymentController;
@@ -309,6 +310,26 @@ Route::middleware('auth')->group(function () {
             ->name('finance.payments.destroy');
     });
 
+Route::prefix('finance')
+    ->middleware(['auth','role:finance'])
+    ->group(function () {
+
+    Route::get('/payrolls',
+        [FinancePayrollController::class,'index'])
+        ->name('finance.payrolls.index');
+
+    Route::get('/payrolls/{payroll}',
+        [FinancePayrollController::class,'show'])
+        ->name('finance.payrolls.show');
+
+    Route::post('/payrolls/{payroll}/approve',
+        [FinancePayrollController::class,'approve'])
+        ->name('finance.payrolls.approve');
+
+    Route::post('/payrolls/{payroll}/paid',
+        [FinancePayrollController::class,'paid'])
+        ->name('finance.payrolls.paid');
+});
 
 
     // ================= STAFF =================

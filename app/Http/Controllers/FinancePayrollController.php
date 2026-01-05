@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payroll;
 use Illuminate\Support\Facades\Auth;
 
-class PayrollController extends Controller
+class FinancePayrollController extends Controller
 {
     public function index()
     {
