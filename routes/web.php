@@ -18,6 +18,7 @@ use App\Http\Controllers\FinanceInvoiceController;
 use App\Http\Controllers\FinancePaymentController;
 use App\Http\Controllers\HREmployeeController;
 use App\Http\Controllers\HRSalaryController;
+use App\Http\Controllers\HRPayrollController;
 
 
 
@@ -376,5 +377,33 @@ Route::middleware('auth')->group(function () {
             [HRSalaryController::class, 'destroy'])
             ->name('hr.salaries.destroy');
     });
+    Route::prefix('hr')
+    ->middleware(['auth','role:hr'])
+    ->group(function () {
+
+    Route::get('/payrolls', 
+        [HRPayrollController::class,'index'])
+        ->name('hr.payrolls.index');
+
+    Route::get('/payrolls/create', 
+        [HRPayrollController::class,'create'])
+        ->name('hr.payrolls.create');
+
+    Route::post('/payrolls', 
+        [HRPayrollController::class,'store'])
+        ->name('hr.payrolls.store');
+
+    Route::get('/payrolls/{payroll}', 
+        [HRPayrollController::class,'show'])
+        ->name('hr.payrolls.show');
+
+    Route::get('/payroll-item/{item}/edit', 
+        [HRPayrollController::class,'editItem'])
+        ->name('hr.payroll-items.edit');
+
+    Route::put('/payroll-item/{item}', 
+        [HRPayrollController::class,'updateItem'])
+        ->name('hr.payroll-items.update');
+});
 
 });
