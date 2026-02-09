@@ -19,5 +19,15 @@ class Employee extends Model
     {
         return $this->hasMany(Salary::class);
     }
+    
+        public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function attendanceRequests()
+    {
+        return $this->hasMany(AttendanceRequest::class);
+    }
 }
 

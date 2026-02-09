@@ -24,5 +24,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
 }
 

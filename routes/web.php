@@ -20,6 +20,93 @@ use App\Http\Controllers\FinancePaymentController;
 use App\Http\Controllers\HREmployeeController;
 use App\Http\Controllers\HRSalaryController;
 use App\Http\Controllers\HRPayrollController;
+use App\Http\Controllers\EmployeeAttendanceController;
+use App\Http\Controllers\EmployeeAttendanceRequestController;
+use App\Http\Controllers\HRAttendanceController;
+use App\Http\Controllers\HRAttendanceRequestController;
+use App\Http\Controllers\Manager\ManagerAttendanceController;
+use App\Http\Controllers\Manager\ManagerAttendanceRequestController;
+
+// =====================
+// EMPLOYEE ROUTES
+// =====================
+Route::middleware(['auth', 'hasEmployee'])
+    ->prefix('attendance')
+    ->name('attendance.')
+    ->group(function () {
+
+    Route::get('/', [EmployeeAttendanceController::class, 'index'])
+        ->name('index');
+
+    Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])
+        ->name('check-in');
+
+    Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])
+        ->name('check-out');
+
+    // attendance request (cuti, izin, sakit)
+    Route::get('/requests', [EmployeeAttendanceRequestController::class, 'index'])
+        ->name('requests.index');
+    Route::get('/requests/create', [EmployeeAttendanceRequestController::class, 'create'])
+        ->name('requests.create');
+    Route::post('/requests', [EmployeeAttendanceRequestController::class, 'store'])
+        ->name('requests.store');
+});
+
+// =====================
+// HR ROUTES
+// =====================
+Route::middleware(['auth', 'role:hr'])
+    ->prefix('hr')
+    ->name('hr.')
+    ->group(function () {
+
+    Route::get('/attendances', [HRAttendanceController::class, 'index'])
+        ->name('attendances.index');
+
+    Route::get('/attendance-requests', [HRAttendanceRequestController::class, 'index'])
+        ->name('attendance-requests.index');
+
+    Route::post('/attendance-requests/{id}/approve', [HRAttendanceRequestController::class, 'approve'])
+        ->name('attendance-requests.approve');
+
+    Route::post('/attendance-requests/{id}/reject', [HRAttendanceRequestController::class, 'reject'])
+        ->name('attendance-requests.reject');
+});
+
+// =====================
+// MANAGER ROUTES
+// =====================
+Route::middleware(['auth', 'role:manager'])
+    ->prefix('manager')
+    ->name('manager.')
+    ->group(function () {
+
+    Route::get('/attendances', [ManagerAttendanceController::class, 'index'])
+        ->name('attendances.index');
+
+    Route::get('/attendance-requests', [ManagerAttendanceRequestController::class, 'index'])
+        ->name('attendance-requests.index');
+
+    Route::post('/attendance-requests/{id}/approve', [ManagerAttendanceRequestController::class, 'approve'])
+        ->name('attendance-requests.approve');
+
+    Route::post('/attendance-requests/{id}/reject', [ManagerAttendanceRequestController::class, 'reject'])
+        ->name('attendance-requests.reject');
+});
+
+// =====================
+// ADMIN ROUTES (Contoh tambahan)
+// =====================
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+    
+    // Audit logs seperti yang Anda contohkan
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])
+        ->name('audit.logs');
+});
 
 
 
