@@ -1,0 +1,12 @@
+To Do
+- mengubah selfie menjadi camera, tidak select file
+
+
+Next Objective
+- perbaiki route yang berantakan
+- mengubah fitur payrolls saat ini menjadi lebih kompleks dengan adanya absensi ini
+- mengubah seluruh view. dan kalo bisa per role memiliki tamplate sendiri-sendiri
+    disesuikan dengan dashboard dan harus ada navigasi agar tidak repot jika mau berganti halaman
+
+
+Remember or Next Can Be Problem
