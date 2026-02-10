@@ -16,7 +16,7 @@ class HRAttendanceRequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('hr.attendance-requests.index', compact('requests'));
+        return view('hr.attendances.indexListReq', compact('requests'));
     }
 
     public function approve($id)

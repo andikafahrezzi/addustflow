@@ -26,4 +26,30 @@ class HRAttendanceController extends Controller
 
         return view('hr.attendances.index', compact('attendances'));
     }
+    
+    public function correct(Request $request, Attendance $attendance)
+    {
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                'in:present,late,absent,leave,sick,permit',
+            ],
+            'correction_reason' => [
+                'required',
+                'string',
+                'min:5',
+            ],
+        ]);
+
+        $attendance->update([
+            'status'            => $validated['status'],
+            'is_corrected'      => true,
+            'correction_reason' => $validated['correction_reason'],
+        ]);
+
+        return back()->with(
+            'success',
+            'Attendance has been corrected by HR'
+        );
+    }
 }

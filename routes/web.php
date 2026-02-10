@@ -67,15 +67,25 @@ Route::middleware(['auth', 'role:hr'])
     Route::get('/attendances', [HRAttendanceController::class, 'index'])
         ->name('attendances.index');
 
-    Route::get('/attendance-requests', [HRAttendanceRequestController::class, 'index'])
+    Route::get('/attendance/requests', [HRAttendanceRequestController::class, 'index'])
         ->name('attendance-requests.index');
 
-    Route::post('/attendance-requests/{id}/approve', [HRAttendanceRequestController::class, 'approve'])
+    Route::post('/attendance/requests/{id}/approve', [HRAttendanceRequestController::class, 'approve'])
         ->name('attendance-requests.approve');
 
-    Route::post('/attendance-requests/{id}/reject', [HRAttendanceRequestController::class, 'reject'])
+    Route::post('/attendance/requests/{id}/reject', [HRAttendanceRequestController::class, 'reject'])
         ->name('attendance-requests.reject');
+
+    Route::get('/attendances', [HRAttendanceController::class, 'index'])
+    ->name('attendances.index');
+
+    Route::patch(
+        '/attendances/{attendance}/correct',
+        [HRAttendanceController::class, 'correct']
+    )->name('attendances.correct');
+    
 });
+
 
 // =====================
 // MANAGER ROUTES
