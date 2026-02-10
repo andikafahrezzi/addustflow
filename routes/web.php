@@ -51,6 +51,9 @@ Route::middleware(['auth', 'hasEmployee'])
         ->name('requests.create');
     Route::post('/requests', [EmployeeAttendanceRequestController::class, 'store'])
         ->name('requests.store');
+    Route::delete('/requests/{attendanceRequest}',
+        [EmployeeAttendanceRequestController::class, 'destroy']
+)           ->name('requests.destroy');
 });
 
 // =====================

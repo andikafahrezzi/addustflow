@@ -47,7 +47,28 @@ class EmployeeAttendanceRequestController extends Controller
         ]);
 
         return redirect()
-            ->route('employee.attendance-requests.index')
+            ->route('attendance.requests.index')
             ->with('success', 'Attendance request berhasil dikirim');
+    }
+    public function destroy(AttendanceRequest $attendanceRequest)
+    {
+        $employee = Auth::user()->employee;
+        abort_if(!$employee, 403);
+
+        // pastikan milik employee
+        if ($attendanceRequest->employee_id !== $employee->id) {
+            abort(403);
+        }
+
+        // hanya boleh hapus pending
+        if ($attendanceRequest->status !== 'pending') {
+            return back()->withErrors('Request sudah diproses dan tidak bisa dihapus');
+        }
+
+        $attendanceRequest->delete();
+
+        return redirect()
+            ->route('attendance.requests.index')
+            ->with('success', 'Request berhasil dihapus');
     }
 }

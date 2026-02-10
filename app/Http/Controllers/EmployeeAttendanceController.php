@@ -18,7 +18,7 @@ class EmployeeAttendanceController extends Controller
         $employee = Auth::user()->employee;
         abort_if(!$employee, 403, 'Employee data not found');
 
-        $today = Carbon::today();
+        $today = now()->toDateString();
 
         $attendance = Attendance::where('employee_id', $employee->id)
             ->where('attendance_date', $today)
@@ -51,7 +51,7 @@ class EmployeeAttendanceController extends Controller
             ]
         );
 
-        if ($attendance->check_in_at) {
+        if ($attendance->exists && $attendance->check_in_at !== null) {
             return back()->withErrors('Sudah check-in hari ini');
         }
 
