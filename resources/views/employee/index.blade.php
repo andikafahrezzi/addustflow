@@ -84,39 +84,80 @@
 @endif
 
 <script>
-if (navigator.geolocation) {
+const OFFICE_LAT = Number({{ config('attendance.office.lat') ?? 0 }});
+const OFFICE_LNG = Number({{ config('attendance.office.lng') ?? 0 }});
+const RADIUS     = Number({{ config('attendance.radius') ?? 0 }});
+
+function distanceInMeters(lat1, lng1, lat2, lng2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng / 2) ** 2;
+
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    if (!navigator.geolocation) return;
+
     navigator.geolocation.getCurrentPosition(
-        function(position) {
+        function (position) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
 
+            // === SET CHECK-IN INPUT ===
             const latIn = document.getElementById('lat');
             const lngIn = document.getElementById('lng');
-            const info = document.getElementById('location-info');
-            const btn = document.getElementById('checkin-btn');
 
             if (latIn && lngIn) {
                 latIn.value = lat;
                 lngIn.value = lng;
 
-                info.innerHTML = `📍 Lokasi terdeteksi`;
-                info.classList.add('text-green-600');
-                btn.disabled = false;
+                const info = document.getElementById('location-info');
+                const btn  = document.getElementById('checkin-btn');
+
+                if (info && btn) {
+                    const distance = distanceInMeters(
+                        lat, lng,
+                        OFFICE_LAT, OFFICE_LNG
+                    );
+
+                    if (distance <= RADIUS) {
+                        info.innerHTML = `Great, Dalam area kantor (${Math.round(distance)} m)`;
+                        info.className = 'text-sm mb-3 text-green-600';
+                        btn.disabled = false;
+                    } else {
+                        info.innerHTML = `Kamu di luar area kantor (${Math.round(distance)} m)`;
+                        info.className = 'text-sm mb-3 text-red-600';
+                        btn.disabled = true;
+                    }
+                }
             }
 
+            // === SET CHECK-OUT INPUT ===
             const latOut = document.getElementById('lat-out');
             const lngOut = document.getElementById('lng-out');
+
             if (latOut && lngOut) {
                 latOut.value = lat;
                 lngOut.value = lng;
             }
         },
-        function() {
-            document.getElementById('location-info').innerHTML =
-                '❌ Gagal mengambil lokasi';
+        function () {
+            const info = document.getElementById('location-info');
+            if (info) info.innerHTML = '❌ Gagal mengambil lokasi';
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
         }
     );
-} else {
-    alert('Browser tidak mendukung GPS');
-}
+});
 </script>
