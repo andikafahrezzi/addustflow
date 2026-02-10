@@ -11,6 +11,7 @@ class Attendance extends Model
         'attendance_date',
         'check_in_at',
         'check_out_at',
+        'late_minutes',
         'status',
         'check_in_lat',
         'check_in_lng',
@@ -26,6 +27,7 @@ class Attendance extends Model
         'attendance_date' => 'date',
         'check_in_at' => 'string',   // TIME, bukan datetime
         'check_out_at' => 'string',
+        'late_minutes' => 'integer',
         'is_corrected' => 'boolean',
     ];
 

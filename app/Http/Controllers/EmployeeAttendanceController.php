@@ -30,56 +30,58 @@ class EmployeeAttendanceController extends Controller
     /**
      * CHECK IN
      */
-    public function checkIn(Request $request)
-    {
-        $employee = Auth::user()->employee;
-        abort_if(!$employee, 403);
+public function checkIn(Request $request)
+{
+    $employee = Auth::user()->employee;
+    abort_if(!$employee, 403, 'Employee not found');
 
-        $request->validate([
-            'lat'   => 'required|numeric',
-            'lng'   => 'required|numeric',
-            'photo' => 'required|image|max:2048', // max 2MB
-        ]);
+    $request->validate([
+        'lat'   => 'required|numeric',
+        'lng'   => 'required|numeric',
+        'photo' => 'required|image|max:2048',
+    ]);
 
-        $today = now()->toDateString();
+    $today = now()->toDateString();
 
-        // pastikan belum ada record hari ini
-        $attendance = Attendance::firstOrCreate(
-            [
-                'employee_id'    => $employee->id,
-                'attendance_date'=> $today,
-            ]
-        );
+    // 1 employee hanya boleh 1 attendance per hari
+    $attendance = Attendance::firstOrCreate([
+        'employee_id'     => $employee->id,
+        'attendance_date' => $today,
+    ]);
 
-        if ($attendance->exists && $attendance->check_in_at !== null) {
-            return back()->withErrors('Sudah check-in hari ini');
-        }
-
-        // simpan foto
-        $photoPath = $request->file('photo')
-            ->store('attendance/check-in', 'public');
-        $checkInTime = Carbon::now();
-        $officeStart = Carbon::createFromTime(8, 0, 0);
-
-        $lateMinutes = 0;
-        $status = 'present';
-
-        if ($checkInTime->gt($officeStart)) {
-            $lateMinutes = $officeStart->diffInMinutes($checkInTime);
-            $status = 'late';
-        }
-        $attendance->update([
-            'check_in_at'   => Carbon::now()->format('H:i:s'),
-            'check_in_lat'  => $request->lat,
-            'check_in_lng'  => $request->lng,
-            'check_in_photo'=> $photoPath,
-            'status'        => $status,
-        ]);
-
-        return redirect()
-            ->route('attendance.index')
-            ->with('success', 'Check-in berhasil');
+    if ($attendance->check_in_at) {
+        return back()->withErrors('Sudah check-in hari ini');
     }
+
+    // simpan foto
+    $photoPath = $request->file('photo')
+        ->store('attendance/check-in', 'public');
+
+    $checkInTime  = now();
+    $officeStart  = Carbon::createFromTime(8, 0, 0);
+
+    // hitung keterlambatan
+    $lateMinutes = max(
+        0,
+        $officeStart->diffInMinutes($checkInTime, false)
+    );
+
+    $status = $lateMinutes > 0 ? 'late' : 'present';
+
+    // simpan data
+    $attendance->update([
+        'check_in_at'    => $checkInTime->format('H:i:s'),
+        'late_minutes'   => $lateMinutes,
+        'status'         => $status,
+        'check_in_lat'   => $request->lat,
+        'check_in_lng'   => $request->lng,
+        'check_in_photo' => $photoPath,
+    ]);
+
+    return redirect()
+        ->route('attendance.index')
+        ->with('success', 'Check-in berhasil');
+}
 
     /**
      * CHECK OUT

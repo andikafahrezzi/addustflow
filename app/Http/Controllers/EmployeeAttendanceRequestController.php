@@ -34,8 +34,23 @@ class EmployeeAttendanceRequestController extends Controller
             'type'       => 'required|in:leave,sick,permit,overtime',
             'start_date' => 'required|date',
             'end_date'   => 'required|date|after_or_equal:start_date',
-            'reason'     => 'nullable|string',
+            'reason'     => 'nullable|string|max:1000',
         ]);
+
+        // ❗ cegah request overlapping
+        $exists = AttendanceRequest::where('employee_id', $employee->id)
+            ->whereIn('status', ['pending', 'approved'])
+            ->where(function ($q) use ($request) {
+                $q->whereBetween('start_date', [$request->start_date, $request->end_date])
+                  ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+            })
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(
+                'Sudah ada request lain pada rentang tanggal tersebut'
+            );
+        }
 
         AttendanceRequest::create([
             'employee_id' => $employee->id,
@@ -50,19 +65,20 @@ class EmployeeAttendanceRequestController extends Controller
             ->route('attendance.requests.index')
             ->with('success', 'Attendance request berhasil dikirim');
     }
+
     public function destroy(AttendanceRequest $attendanceRequest)
     {
         $employee = Auth::user()->employee;
         abort_if(!$employee, 403);
 
-        // pastikan milik employee
         if ($attendanceRequest->employee_id !== $employee->id) {
             abort(403);
         }
 
-        // hanya boleh hapus pending
         if ($attendanceRequest->status !== 'pending') {
-            return back()->withErrors('Request sudah diproses dan tidak bisa dihapus');
+            return back()->withErrors(
+                'Request sudah diproses dan tidak bisa dihapus'
+            );
         }
 
         $attendanceRequest->delete();
