@@ -88,13 +88,13 @@ Route::middleware(['auth', 'role:manager'])
     Route::get('/attendances', [ManagerAttendanceController::class, 'index'])
         ->name('attendances.index');
 
-    Route::get('/attendance-requests', [ManagerAttendanceRequestController::class, 'index'])
+    Route::get('/attendance/requests', [ManagerAttendanceRequestController::class, 'index'])
         ->name('attendance-requests.index');
 
-    Route::post('/attendance-requests/{id}/approve', [ManagerAttendanceRequestController::class, 'approve'])
+    Route::post('/attendance/requests/{id}/approve', [ManagerAttendanceRequestController::class, 'approve'])
         ->name('attendance-requests.approve');
 
-    Route::post('/attendance-requests/{id}/reject', [ManagerAttendanceRequestController::class, 'reject'])
+    Route::post('/attendance/requests/{id}/reject', [ManagerAttendanceRequestController::class, 'reject'])
         ->name('attendance-requests.reject');
 });
 

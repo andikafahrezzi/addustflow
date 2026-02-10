@@ -17,7 +17,7 @@ class ManagerAttendanceRequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('manager.attendance-requests.index', compact('requests'));
+        return view('manager.attendances.indexListReq', compact('requests'));
     }
 
     public function approve($id)
