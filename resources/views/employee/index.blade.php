@@ -37,10 +37,22 @@
 
     <input type="hidden" name="lat" id="lat">
     <input type="hidden" name="lng" id="lng">
+    <input type="hidden" name="photo" id="photoInput">
 
     <div class="mb-3">
-        <label class="block text-sm">Foto Selfie</label>
-        <input type="file" name="photo" accept="image/*" capture="user" required>
+        <label class="block text-sm font-semibold mb-2">Selfie Check-in</label>
+
+        <video id="video" autoplay playsinline class="w-64 rounded border"></video>
+
+        <canvas id="canvas" class="hidden"></canvas>
+
+        <button type="button"
+                id="captureBtn"
+                class="mt-3 px-4 py-2 bg-blue-600 text-white rounded">
+            Ambil Foto
+        </button>
+
+        <p id="statusText" class="text-sm text-gray-500 mt-2"></p>
     </div>
 
     <div id="location-info" class="text-sm mb-3 text-gray-600">
@@ -66,14 +78,21 @@
 
     <input type="hidden" name="lat" id="lat-out">
     <input type="hidden" name="lng" id="lng-out">
+    <input type="hidden" name="photo" id="photoOut">
 
     <div class="mb-3">
-        <label class="block text-sm">Foto Selfie</label>
-        <input type="file"
-               name="photo"
-               accept="image/*"
-               capture="user"
-               required>
+        <label class="block text-sm font-semibold mb-2">Selfie Check-out</label>
+
+        <video id="videoOut" autoplay playsinline class="w-64 rounded border"></video>
+        <canvas id="canvasOut" class="hidden"></canvas>
+
+        <button type="button"
+                id="captureOutBtn"
+                class="mt-3 px-4 py-2 bg-blue-600 text-white rounded">
+            Ambil Foto
+        </button>
+
+        <p id="statusOutText" class="text-sm text-gray-500 mt-2"></p>
     </div>
 
     <button type="submit"
@@ -159,5 +178,147 @@ document.addEventListener('DOMContentLoaded', function () {
             maximumAge: 60000
         }
     );
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const photoInput = document.getElementById('photoInput');
+    const latInput = document.getElementById('lat');
+    const lngInput = document.getElementById('lng');
+    const statusText = document.getElementById('statusText');
+    const checkinBtn = document.getElementById('checkin-btn');
+
+    if (!video || !captureBtn) return;
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" }
+    })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(err => {
+        alert("Tidak bisa mengakses kamera");
+        console.log(err);
+    });
+
+    captureBtn.addEventListener('click', function () {
+
+        if (!video.videoWidth) {
+            alert("Kamera belum siap");
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, canvas.height - 110, canvas.width, 110);
+
+        ctx.fillStyle = "white";
+        ctx.font = "18px Arial";
+
+        const now = new Date();
+        const timeString = now.toLocaleString();
+
+        const lat = latInput ? latInput.value : '-';
+        const lng = lngInput ? lngInput.value : '-';
+
+        ctx.fillText("PT MY PERUSAHAAN", 20, canvas.height - 75);
+        ctx.fillText(timeString, 20, canvas.height - 45);
+        ctx.fillText("Lat: " + lat + " | Lng: " + lng, 20, canvas.height - 15);
+
+        const dataURL = canvas.toDataURL('image/jpeg', 0.7);
+
+        if (photoInput) photoInput.value = dataURL;
+
+        if (statusText)
+            statusText.innerText = "Foto siap dikirim ✔";
+
+        if (checkinBtn)
+            checkinBtn.disabled = false;
+    });
+
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const video = document.getElementById('videoOut');
+    const canvas = document.getElementById('canvasOut');
+    const captureBtn = document.getElementById('captureOutBtn');
+    const photoInput = document.getElementById('photoOut');
+    const latInput = document.getElementById('lat-out');
+    const lngInput = document.getElementById('lng-out');
+    const statusText = document.getElementById('statusOutText');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    if (!video || !captureBtn) return;
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" }
+    })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            latInput.value = position.coords.latitude;
+            lngInput.value = position.coords.longitude;
+        });
+    }
+
+    captureBtn.addEventListener('click', function () {
+
+        if (!video.videoWidth) {
+            alert("Kamera belum siap");
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, canvas.height - 110, canvas.width, 110);
+
+        ctx.fillStyle = "white";
+        ctx.font = "18px Arial";
+
+        const now = new Date();
+        const timeString = now.toLocaleString();
+
+        ctx.fillText("PT MY PERUSAHAAN", 20, canvas.height - 75);
+        ctx.fillText(timeString, 20, canvas.height - 45);
+        ctx.fillText(
+            "Lat: " + latInput.value + " | Lng: " + lngInput.value,
+            20,
+            canvas.height - 15
+        );
+
+        const dataURL = canvas.toDataURL('image/jpeg', 0.7);
+
+        photoInput.value = dataURL;
+
+        statusText.innerText = "Foto siap dikirim ✔";
+        if (checkoutBtn) {
+            checkoutBtn.disabled = false;
+        }
+    });
+
 });
 </script>

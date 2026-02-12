@@ -38,7 +38,7 @@ public function checkIn(Request $request)
     $request->validate([
         'lat'   => 'required|numeric',
         'lng'   => 'required|numeric',
-        'photo' => 'required|image|max:2048',
+        'photo' => 'required|string',
     ]);
 
     $today = now()->toDateString();
@@ -54,13 +54,24 @@ public function checkIn(Request $request)
     }
 
     // simpan foto
-    $photoPath = $request->file('photo')
-        ->store('attendance/check-in', 'public');
+    $image = $request->photo;
 
+    $image = preg_replace('/^data:image\/\w+;base64,/', '', $image);
+    $image = str_replace(' ', '+', $image);
+
+    $imageName = 'checkin_' . time() . '.jpg';
+
+    Storage::disk('public')->put(
+        'attendance/check-in/' . $imageName,
+        base64_decode($image)
+    );
+
+    $photoPath = 'attendance/check-in/' . $imageName;
+
+    // hitung keterlambatan
     $checkInTime  = now();
     $officeStart  = Carbon::createFromTime(8, 0, 0);
 
-    // hitung keterlambatan
     $lateMinutes = max(
         0,
         $officeStart->diffInMinutes($checkInTime, false)
@@ -94,7 +105,7 @@ public function checkIn(Request $request)
         $request->validate([
             'lat'   => 'required|numeric',
             'lng'   => 'required|numeric',
-            'photo' => 'required|image|max:2048',
+            'photo' => 'required|string',
         ]);
 
         $today = Carbon::today();
@@ -111,8 +122,19 @@ public function checkIn(Request $request)
             return back()->withErrors('Sudah check-out');
         }
 
-        $photoPath = $request->file('photo')
-            ->store('attendance/check-out', 'public');
+        $image = $request->photo;
+
+        $image = preg_replace('/^data:image\/\w+;base64,/', '', $image);
+        $image = str_replace(' ', '+', $image);
+
+        $imageName = 'checkout_' . time() . '.jpg';
+
+        Storage::disk('public')->put(
+            'attendance/check-out/' . $imageName,
+            base64_decode($image)
+        );
+
+        $photoPath = 'attendance/check-out/' . $imageName;
 
         $attendance->update([
             'check_out_at'   => Carbon::now()->format('H:i:s'),
