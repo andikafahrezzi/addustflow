@@ -12,12 +12,24 @@ class EmployeeAttendanceRequestController extends Controller
     {
         $employee = Auth::user()->employee;
         abort_if(!$employee, 403);
+        $user = \App\Models\User::with('role')
+                ->find(Auth::id());
+
+        $layout = match ($user->role->name) {
+            'hr' => 'layouts.hr',
+            'manager' => 'layouts.manager',
+            'staff' => 'layouts.staff',
+            'admin' => 'layouts.admin',
+            'finance' => 'layouts.finance',
+            'marketing' => 'layouts.marketing',
+            default => 'layouts.staff',
+        };
 
         $requests = AttendanceRequest::where('employee_id', $employee->id)
             ->latest()
             ->get();
 
-        return view('employee.attendance_requests.index', compact('requests'));
+        return view('employee.attendance_requests.index', compact('requests','layout'));
     }
 
     public function create()

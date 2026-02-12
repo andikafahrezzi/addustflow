@@ -16,6 +16,19 @@ class EmployeeAttendanceController extends Controller
     public function index()
     {
         $employee = Auth::user()->employee;
+        
+        $user = \App\Models\User::with('role')
+                ->find(Auth::id());
+
+        $layout = match ($user->role->name) {
+            'hr' => 'layouts.hr',
+            'manager' => 'layouts.manager',
+            'staff' => 'layouts.staff',
+            'admin' => 'layouts.admin',
+            'finance' => 'layouts.finance',
+            'marketing' => 'layouts.marketing',
+            default => 'layouts.staff',
+        };
         abort_if(!$employee, 403, 'Employee data not found');
 
         $today = now()->toDateString();
@@ -24,7 +37,7 @@ class EmployeeAttendanceController extends Controller
             ->where('attendance_date', $today)
             ->first();
 
-        return view('employee.index', compact('attendance'));
+        return view('employee.index', compact('attendance', 'layout'));
     }
 
     /**
