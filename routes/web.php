@@ -27,6 +27,7 @@ use App\Http\Controllers\HRAttendanceRequestController;
 use App\Http\Controllers\Manager\ManagerAttendanceController;
 use App\Http\Controllers\Manager\ManagerAttendanceRequestController;
 use App\Http\Controllers\Staff\TaskController;
+use App\Http\Controllers\Manager\TaskManagerController;
 
 // =====================
 // EMPLOYEE ROUTES
@@ -248,6 +249,25 @@ Route::middleware('auth')->group(function () {
     });
 
 
+
+Route::middleware(['auth'])
+    ->prefix('manager')
+    ->name('manager.')
+    ->group(function () {
+
+        Route::get('/tasks', [TaskManagerController::class, 'index'])
+            ->name('tasks.index');
+        Route::get('/tasks/create', [TaskManagerController::class, 'create'])->name('tasks.create');
+        Route::post('/tasks', [TaskManagerController::class, 'store'])->name('tasks.store');
+        Route::get('/tasks/{task}', [TaskManagerController::class, 'show'])
+            ->name('tasks.show');
+
+
+        Route::post('/tasks/{task}/approve', [TaskManagerController::class, 'approve'])
+            ->name('tasks.approve');
+        Route::post('/tasks/{task}/revision', [TaskManagerController::class, 'revision'])
+            ->name('tasks.revision');
+    });
     
     // ================= MARKETING =================
     Route::middleware('role:marketing')->group(function () {
