@@ -25,6 +25,12 @@
                 {{ $task->description ?? '-' }}
             </p>
         </div>
+        <div class="mt-4">
+            <strong>Repository:</strong>
+            <p class="text-gray-700 mt-1">
+                {{ $task->project->repository_url ?? '-' }}
+            </p>
+        </div>
     </div>
 
     {{-- FORM UPDATE STATUS --}}
