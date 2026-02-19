@@ -50,4 +50,15 @@ class Project extends Model
     {
         return $this->hasMany(Expense::class);
     }
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_members')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

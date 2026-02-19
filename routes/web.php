@@ -26,6 +26,7 @@ use App\Http\Controllers\HRAttendanceController;
 use App\Http\Controllers\HRAttendanceRequestController;
 use App\Http\Controllers\Manager\ManagerAttendanceController;
 use App\Http\Controllers\Manager\ManagerAttendanceRequestController;
+use App\Http\Controllers\Staff\TaskController;
 
 // =====================
 // EMPLOYEE ROUTES
@@ -247,7 +248,6 @@ Route::middleware('auth')->group(function () {
     });
 
 
-
     
     // ================= MARKETING =================
     Route::middleware('role:marketing')->group(function () {
@@ -436,6 +436,23 @@ Route::prefix('finance')
     Route::middleware('role:staff')->group(function () {
         Route::get('/staff/projects', fn () => 'Project Staff');
     });
+
+
+Route::middleware(['auth'])->prefix('staff')->name('staff.')->group(function () {
+
+    // Dashboard task staff
+    Route::get('/tasks', [TaskController::class, 'index'])
+        ->name('tasks.index');
+
+    // Detail task
+    Route::get('/tasks/{task}', [TaskController::class, 'show'])
+        ->name('tasks.show');
+
+    // Update status task (in_progress / submitted)
+    Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])
+        ->name('tasks.update-status');
+
+});
 
     // ================= HR =================
     Route::prefix('hr')->middleware(['auth','role:hr'])->group(function () {

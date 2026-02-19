@@ -28,5 +28,32 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+    public function projectMemberships()
+    {
+        return $this->hasMany(ProjectMember::class);
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_members')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+
+    public function assignedTasks()
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(TaskReview::class, 'reviewer_id');
+    }
+
+    // Review yang dibuat user (manager)
+    public function taskReviews()
+    {
+        return $this->hasMany(TaskReview::class, 'reviewer_id');
+    }
 }
 
