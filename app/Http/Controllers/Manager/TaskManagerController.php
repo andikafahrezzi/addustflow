@@ -28,14 +28,9 @@ class TaskManagerController extends Controller
      */
     private function authorizeProject(Task $task)
     {
-        $exists = $task->project
-            ->users()
-            ->where('users.id', Auth::id())
-            ->exists();
-
-        if (!$exists) {
-            abort(403);
-        }
+        if ($task->project->manager_id !== Auth::id()) {
+        abort(403);
+    }
     }
 
     /**
@@ -45,8 +40,8 @@ class TaskManagerController extends Controller
     {
         $this->ensureManager();
 
-        $tasks = Task::whereHas('project.users', function ($q) {
-                $q->where('users.id', Auth::id());
+        $tasks = Task::whereHas('project', function ($q) {
+        $q->where('manager_id', Auth::id());
             })
             ->with(['project', 'assignee'])
             ->latest()

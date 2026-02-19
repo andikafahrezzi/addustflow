@@ -11,6 +11,8 @@
         <p class="mb-2"><strong>Assignee:</strong> {{ $task->assignee->name }}</p>
         <p class="mb-2"><strong>Status:</strong> {{ ucfirst(str_replace('_',' ', $task->status)) }}</p>
 
+        <p class="mt-4"><strong>Repo:</strong></p>
+        <p class="text-gray-600">{{ $task->project->repository_url }}</p>
         <p class="mt-4"><strong>Deskripsi:</strong></p>
         <p class="text-gray-600">{{ $task->description }}</p>
 

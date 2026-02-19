@@ -18,18 +18,19 @@
                     <option value="">-- Pilih Project --</option>
                     @foreach($projects as $project)
                         <option value="{{ $project->id }}"
-                            data-members='@json(
-                                $project->members->map(function($member){
-                                    return [
-                                        "id" => $member->user->id,
-                                        "name" => $member->user->name
-                                    ];
-                                })
-                            )'
-                            {{ old('project_id') == $project->id ? 'selected' : '' }}
-                        >
-                            {{ $project->name }}
-                        </option>
+    data-repo="{{ $project->repository_url }}"
+    data-members='@json(
+        $project->members->map(function($member){
+            return [
+                "id" => $member->user->id,
+                "name" => $member->user->name
+            ];
+        })
+    )'
+    {{ old('project_id') == $project->id ? 'selected' : '' }}
+>
+    {{ $project->name }}
+</option>
                     @endforeach
                 </select>
 
@@ -37,7 +38,14 @@
                     <p class="text-red-500 text-sm">{{ $message }}</p>
                 @enderror
             </div>
-
+<div class="mb-4">
+    <label class="block font-semibold mb-2">Repository</label>
+    <input type="text"
+        id="repoField"
+        class="w-full border rounded-lg p-2 bg-gray-100"
+        readonly
+        placeholder="Repository project akan tampil di sini">
+</div>
             {{-- Title --}}
             <div class="mb-4">
                 <label class="block font-semibold mb-2">Judul Task</label>
@@ -69,7 +77,7 @@
                     <p class="text-red-500 text-sm">{{ $message }}</p>
                 @enderror
             </div>
-            
+
             {{-- Deadline --}}
             <div class="mb-4">
                 <label class="block font-semibold mb-2">Deadline</label>
@@ -130,5 +138,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const projectSelect = document.getElementById('projectSelect');
+    const memberSelect  = document.getElementById('memberSelect');
+    const repoField     = document.getElementById('repoField');
+
+    function loadProjectData() {
+
+        const selectedOption = projectSelect.options[projectSelect.selectedIndex];
+
+        // 🔹 Load Members
+        const membersData = selectedOption.getAttribute('data-members');
+        memberSelect.innerHTML = '<option value="">-- Pilih Member --</option>';
+
+        if (membersData) {
+            const members = JSON.parse(membersData);
+
+            members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.name;
+
+                if ("{{ old('assigned_to') }}" == member.id) {
+                    option.selected = true;
+                }
+
+                memberSelect.appendChild(option);
+            });
+        }
+
+        // 🔹 Load Repository
+        const repo = selectedOption.getAttribute('data-repo');
+        repoField.value = repo ? repo : '';
+    }
+
+    projectSelect.addEventListener('change', loadProjectData);
+
+    // Auto load kalau ada old value
+    if (projectSelect.value) {
+        loadProjectData();
+    }
+
+});
+</script>
 @endsection

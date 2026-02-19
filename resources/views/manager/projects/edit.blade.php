@@ -20,6 +20,17 @@
             </select>
         </div>
 
+        <div class="mb-4">
+            <label class="block font-semibold mb-2">Repository URL</label>
+            <input type="url" name="repository_url"
+                class="w-full border rounded-lg p-2"
+                value="{{ old('repository_url') }}"
+                placeholder="https://github.com/username/repo">
+
+            @error('repository_url')
+                <p class="text-red-500 text-sm">{{ $message }}</p>
+            @enderror
+        </div>
         {{-- estimated value --}}
         <div class="mb-3">
             <label>Estimated Value</label>

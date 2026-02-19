@@ -13,6 +13,7 @@ class Project extends Model
         'proposal_id',
         'client_id',
         'name',
+        'repository_url',
         'contract_value',
         'budget',
         'start_date',

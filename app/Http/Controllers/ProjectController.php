@@ -42,6 +42,7 @@ class ProjectController extends Controller
     {
         $request->validate([
             'proposal_id' => 'required|exists:proposals,id',
+            'repository_url' => 'nullable|url',
             'start_date'  => 'nullable|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
             'budget'      => 'required|numeric|min:0',
@@ -53,6 +54,7 @@ class ProjectController extends Controller
             'proposal_id'    => $proposal->id,
             'client_id'      => $proposal->lead->client_id,  // otomatis
             'name'           => $proposal->title,            // otomatis
+            'repository_url' => $request->repository_url,   // input optional
             'contract_value' => $proposal->estimated_value,  // otomatis
             'budget'         => $request->budget,            // Manager input
             'start_date'     => $request->start_date,
@@ -76,6 +78,7 @@ class ProjectController extends Controller
     {
         $request->validate([
             'proposal_id' => 'required|exists:proposals,id',
+            'repository_url' => 'nullable|url',
             'start_date'  => 'nullable|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
             'budget'      => 'required|numeric|min:0',
@@ -87,6 +90,7 @@ class ProjectController extends Controller
             'proposal_id'    => $proposal->id,
             'client_id'      => $proposal->lead->client_id,
             'name'           => $proposal->title,
+            'repository_url' => $request->repository_url,
             'contract_value' => $proposal->estimated_value,
             'budget'         => $request->budget,
             'start_date'     => $request->start_date,
