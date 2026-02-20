@@ -68,11 +68,13 @@ class ProjectController extends Controller
     }
 
     public function edit(Project $project)
-    {
-        $proposals = Proposal::where('status', 'approved')->get();
+{
+    $proposals = Proposal::where('status', 'approved')
+                    ->with('project')
+                    ->get();
 
-        return view('manager.projects.edit', compact('project', 'proposals'));
-    }
+    return view('manager.projects.edit', compact('project', 'proposals'));
+}
 
     public function update(Request $request, Project $project)
     {

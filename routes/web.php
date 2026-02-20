@@ -29,103 +29,6 @@ use App\Http\Controllers\Manager\ManagerAttendanceRequestController;
 use App\Http\Controllers\Staff\TaskController;
 use App\Http\Controllers\Manager\TaskManagerController;
 
-// =====================
-// EMPLOYEE ROUTES
-// =====================
-Route::middleware(['auth', 'hasEmployee'])
-    ->prefix('attendance')
-    ->name('attendance.')
-    ->group(function () {
-
-    Route::get('/', [EmployeeAttendanceController::class, 'index'])
-        ->name('index');
-
-    Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])
-        ->name('check-in');
-
-    Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])
-        ->name('check-out');
-
-    // attendance request (cuti, izin, sakit)
-    Route::get('/requests', [EmployeeAttendanceRequestController::class, 'index'])
-        ->name('requests.index');
-    Route::get('/requests/create', [EmployeeAttendanceRequestController::class, 'create'])
-        ->name('requests.create');
-    Route::post('/requests', [EmployeeAttendanceRequestController::class, 'store'])
-        ->name('requests.store');
-    Route::delete('/requests/{attendanceRequest}',
-        [EmployeeAttendanceRequestController::class, 'destroy']
-)           ->name('requests.destroy');
-});
-
-// =====================
-// HR ROUTES
-// =====================
-Route::middleware(['auth', 'role:hr'])
-    ->prefix('hr')
-    ->name('hr.')
-    ->group(function () {
-
-    Route::get('/attendances', [HRAttendanceController::class, 'index'])
-        ->name('attendances.index');
-
-    Route::get('/attendance/requests', [HRAttendanceRequestController::class, 'index'])
-        ->name('attendance-requests.index');
-
-    Route::post('/attendance/requests/{id}/approve', [HRAttendanceRequestController::class, 'approve'])
-        ->name('attendance-requests.approve');
-
-    Route::post('/attendance/requests/{id}/reject', [HRAttendanceRequestController::class, 'reject'])
-        ->name('attendance-requests.reject');
-
-    Route::get('/attendances', [HRAttendanceController::class, 'index'])
-    ->name('attendances.index');
-
-    Route::patch(
-        '/attendances/{attendance}/correct',
-        [HRAttendanceController::class, 'correct']
-    )->name('attendances.correct');
-    
-});
-
-
-// =====================
-// MANAGER ROUTES
-// =====================
-Route::middleware(['auth', 'role:manager'])
-    ->prefix('manager')
-    ->name('manager.')
-    ->group(function () {
-
-    Route::get('/attendances', [ManagerAttendanceController::class, 'index'])
-        ->name('attendances.index');
-
-    Route::get('/attendance/requests', [ManagerAttendanceRequestController::class, 'index'])
-        ->name('attendance-requests.index');
-
-    Route::post('/attendance/requests/{id}/approve', [ManagerAttendanceRequestController::class, 'approve'])
-        ->name('attendance-requests.approve');
-
-    Route::post('/attendance/requests/{id}/reject', [ManagerAttendanceRequestController::class, 'reject'])
-        ->name('attendance-requests.reject');
-});
-
-// =====================
-// ADMIN ROUTES (Contoh tambahan)
-// =====================
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-    
-    // Audit logs seperti yang Anda contohkan
-    Route::get('/audit-logs', [AuditLogController::class, 'index'])
-        ->name('audit.logs');
-});
-
-
-
-
 
 Route::get('/', function () {
     return view('welcome');
@@ -155,6 +58,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
         Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
         Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    });
+    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+        
+        // Audit logs seperti yang Anda contohkan
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])
+            ->name('audit.logs');
     });
 
 
@@ -250,25 +162,43 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::middleware(['auth'])
-    ->prefix('manager')
-    ->name('manager.')
-    ->group(function () {
+    Route::middleware(['auth'])
+        ->prefix('manager')
+        ->name('manager.')
+        ->group(function () {
 
-        Route::get('/tasks', [TaskManagerController::class, 'index'])
-            ->name('tasks.index');
-        Route::get('/tasks/create', [TaskManagerController::class, 'create'])->name('tasks.create');
-        Route::post('/tasks', [TaskManagerController::class, 'store'])->name('tasks.store');
-        Route::get('/tasks/{task}', [TaskManagerController::class, 'show'])
-            ->name('tasks.show');
+            Route::get('/tasks', [TaskManagerController::class, 'index'])
+                ->name('tasks.index');
+            Route::get('/tasks/create', [TaskManagerController::class, 'create'])->name('tasks.create');
+            Route::post('/tasks', [TaskManagerController::class, 'store'])->name('tasks.store');
+            Route::get('/tasks/{task}', [TaskManagerController::class, 'show'])
+                ->name('tasks.show');
 
 
-        Route::post('/tasks/{task}/approve', [TaskManagerController::class, 'approve'])
-            ->name('tasks.approve');
-        Route::post('/tasks/{task}/revision', [TaskManagerController::class, 'revision'])
-            ->name('tasks.revision');
+            Route::post('/tasks/{task}/approve', [TaskManagerController::class, 'approve'])
+                ->name('tasks.approve');
+            Route::post('/tasks/{task}/revision', [TaskManagerController::class, 'revision'])
+                ->name('tasks.revision');
+        });
+    Route::middleware(['auth', 'role:manager'])
+        ->prefix('manager')
+        ->name('manager.')
+        ->group(function () {
+
+            Route::get('/attendances', [ManagerAttendanceController::class, 'index'])
+                ->name('attendances.index');
+
+            Route::get('/attendance/requests', [ManagerAttendanceRequestController::class, 'index'])
+                ->name('attendance-requests.index');
+
+            Route::post('/attendance/requests/{id}/approve', [ManagerAttendanceRequestController::class, 'approve'])
+                ->name('attendance-requests.approve');
+
+            Route::post('/attendance/requests/{id}/reject', [ManagerAttendanceRequestController::class, 'reject'])
+                ->name('attendance-requests.reject');
     });
-    
+
+
     // ================= MARKETING =================
     Route::middleware('role:marketing')->group(function () {
     });
@@ -430,26 +360,26 @@ Route::middleware(['auth'])
             ->name('finance.payments.destroy');
     });
 
-Route::prefix('finance')
-    ->middleware(['auth','role:finance'])
-    ->group(function () {
+    Route::prefix('finance')
+        ->middleware(['auth','role:finance'])
+        ->group(function () {
 
-    Route::get('/payrolls',
-        [FinancePayrollController::class,'index'])
-        ->name('finance.payrolls.index');
+        Route::get('/payrolls',
+            [FinancePayrollController::class,'index'])
+            ->name('finance.payrolls.index');
 
-    Route::get('/payrolls/{payroll}',
-        [FinancePayrollController::class,'show'])
-        ->name('finance.payrolls.show');
+        Route::get('/payrolls/{payroll}',
+            [FinancePayrollController::class,'show'])
+            ->name('finance.payrolls.show');
 
-    Route::post('/payrolls/{payroll}/approve',
-        [FinancePayrollController::class,'approve'])
-        ->name('finance.payrolls.approve');
+        Route::post('/payrolls/{payroll}/approve',
+            [FinancePayrollController::class,'approve'])
+            ->name('finance.payrolls.approve');
 
-    Route::post('/payrolls/{payroll}/paid',
-        [FinancePayrollController::class,'paid'])
-        ->name('finance.payrolls.paid');
-});
+        Route::post('/payrolls/{payroll}/paid',
+            [FinancePayrollController::class,'paid'])
+            ->name('finance.payrolls.paid');
+    });
 
 
     // ================= STAFF =================
@@ -458,21 +388,46 @@ Route::prefix('finance')
     });
 
 
-Route::middleware(['auth'])->prefix('staff')->name('staff.')->group(function () {
+    Route::middleware(['auth'])->prefix('staff')->name('staff.')->group(function () {
 
-    // Dashboard task staff
-    Route::get('/tasks', [TaskController::class, 'index'])
-        ->name('tasks.index');
+        // Dashboard task staff
+        Route::get('/tasks', [TaskController::class, 'index'])
+            ->name('tasks.index');
 
-    // Detail task
-    Route::get('/tasks/{task}', [TaskController::class, 'show'])
-        ->name('tasks.show');
+        // Detail task
+        Route::get('/tasks/{task}', [TaskController::class, 'show'])
+            ->name('tasks.show');
 
-    // Update status task (in_progress / submitted)
-    Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])
-        ->name('tasks.update-status');
+        // Update status task (in_progress / submitted)
+        Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])
+            ->name('tasks.update-status');
 
-});
+    });
+    Route::middleware(['auth', 'hasEmployee'])
+        ->prefix('attendance')
+        ->name('attendance.')
+        ->group(function () {
+
+            Route::get('/', [EmployeeAttendanceController::class, 'index'])
+                ->name('index');
+
+            Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])
+                ->name('check-in');
+
+            Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])
+                ->name('check-out');
+
+            // attendance request (cuti, izin, sakit)
+            Route::get('/requests', [EmployeeAttendanceRequestController::class, 'index'])
+                ->name('requests.index');
+            Route::get('/requests/create', [EmployeeAttendanceRequestController::class, 'create'])
+                ->name('requests.create');
+            Route::post('/requests', [EmployeeAttendanceRequestController::class, 'store'])
+                ->name('requests.store');
+            Route::delete('/requests/{attendanceRequest}',
+                [EmployeeAttendanceRequestController::class, 'destroy'])           
+                ->name('requests.destroy');
+    });
 
     // ================= HR =================
     Route::prefix('hr')->middleware(['auth','role:hr'])->group(function () {
@@ -539,29 +494,55 @@ Route::middleware(['auth'])->prefix('staff')->name('staff.')->group(function () 
     ->middleware(['auth','role:hr'])
     ->group(function () {
 
-    Route::get('/payrolls', 
-        [HRPayrollController::class,'index'])
-        ->name('hr.payrolls.index');
+        Route::get('/payrolls', 
+            [HRPayrollController::class,'index'])
+            ->name('hr.payrolls.index');
 
-    Route::get('/payrolls/create', 
-        [HRPayrollController::class,'create'])
-        ->name('hr.payrolls.create');
+        Route::get('/payrolls/create', 
+            [HRPayrollController::class,'create'])
+            ->name('hr.payrolls.create');
 
-    Route::post('/payrolls', 
-        [HRPayrollController::class,'store'])
-        ->name('hr.payrolls.store');
+        Route::post('/payrolls', 
+            [HRPayrollController::class,'store'])
+            ->name('hr.payrolls.store');
 
-    Route::get('/payrolls/{payroll}', 
-        [HRPayrollController::class,'show'])
-        ->name('hr.payrolls.show');
+        Route::get('/payrolls/{payroll}', 
+            [HRPayrollController::class,'show'])
+            ->name('hr.payrolls.show');
 
-    Route::get('/payroll-item/{item}/edit', 
-        [HRPayrollController::class,'editItem'])
-        ->name('hr.payroll-items.edit');
+        Route::get('/payroll-item/{item}/edit', 
+            [HRPayrollController::class,'editItem'])
+            ->name('hr.payroll-items.edit');
 
-    Route::put('/payroll-item/{item}', 
-        [HRPayrollController::class,'updateItem'])
-        ->name('hr.payroll-items.update');
-});
+        Route::put('/payroll-item/{item}', 
+            [HRPayrollController::class,'updateItem'])
+            ->name('hr.payroll-items.update');
+    });
+    Route::middleware(['auth', 'role:hr'])
+        ->prefix('hr')
+        ->name('hr.')
+        ->group(function () {
+
+            Route::get('/attendances', [HRAttendanceController::class, 'index'])
+                ->name('attendances.index');
+
+            Route::get('/attendance/requests', [HRAttendanceRequestController::class, 'index'])
+                ->name('attendance-requests.index');
+
+            Route::post('/attendance/requests/{id}/approve', [HRAttendanceRequestController::class, 'approve'])
+                ->name('attendance-requests.approve');
+
+            Route::post('/attendance/requests/{id}/reject', [HRAttendanceRequestController::class, 'reject'])
+                ->name('attendance-requests.reject');
+
+            Route::get('/attendances', [HRAttendanceController::class, 'index'])
+            ->name('attendances.index');
+
+            Route::patch(
+                '/attendances/{attendance}/correct',
+                [HRAttendanceController::class, 'correct']
+            )->name('attendances.correct');
+        
+    });
 
 });
